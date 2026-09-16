@@ -1,0 +1,256 @@
+/* Geral */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #E2E8F0;
+}
+
+.login-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/** Lado esquerdo azul **/
+.login-info {
+    flex: 40%;
+    min-width: 400px;
+    background: linear-gradient(to bottom, #1E3A8A, #2563EB);
+    color: #FFFFFF;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* "cabeçalho" do lado esquerdo: o nome do sistema e a logo */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: auto;
+}
+
+.brand-icon {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    overflow: hidden;
+}
+
+.brand-icon img {
+    width: 20px;
+}
+
+/* conteúdos principais */
+.info-content {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.hero-icon {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 90px;
+    height: 90px;
+    border-radius: 18px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.hero-icon img {
+    width: 30px;
+}
+
+.info-content h2 {
+    font-size: 38px;
+    line-height: 1.2;
+    margin-bottom: 15px;
+}
+
+.hero-desc {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #DBEAFE;
+    margin-bottom: 35px;
+    max-width: 90%;
+}
+
+/* características */
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.feature-item img {
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 4px;
+    object-fit: contain;
+}
+
+.feature-item p {
+    font-size: 14px;
+    color: #DBEAFE;
+}
+
+.login-footer {
+    margin-top: auto;
+    font-size: 12px;
+    color: #BFDBFE;
+}
+
+/** Lado direito **/
+.login-right {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+ /* card do formulário */
+.login-card {
+    background-color: #ffffff;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-card h1 {
+    font-size: 26px;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.login-card .subtitle {
+    font-size: 14px;
+    color: #64748B;
+    margin-bottom: 35px;
+}
+
+/* campos do formulário */
+.input-group {
+    margin-top: 22px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    color: #4a4a4a;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 40px 14px 40px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: #2154c5;
+}
+
+.input-wrapper input::placeholder {
+    color: #b0b0b0;
+}
+
+.icon-left {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    opacity: 0.5;
+}
+
+.icon-right {
+    position: absolute;
+    right: 14px;
+    width: 16px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.btn-entrar {
+    width: 100%;
+    background-color: #2563EB;
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 28px;
+}
+
+.btn-entrar:hover {
+    background-color: #18429c;
+}
+
+/** Responsividade para telas menores **/
+@media (max-width: 900px) {
+    .login-container { 
+        flex-direction: column; 
+    }
+    
+    .login-info { 
+        width: 100%; 
+        min-width: auto; 
+        padding: 40px 30px; 
+        align-items: center; 
+        text-align: center; 
+    }
+    
+    .brand { margin-bottom: 30px; }
+    .hero-icon { margin: 0 auto 20px auto; }
+    .hero-desc { margin-left: auto; margin-right: auto; }
+    
+    .feature-item { 
+        text-align: left; 
+        justify-content: center; 
+    } 
+    
+    .login-right { 
+        width: 100%; 
+        padding: 30px 20px; 
+    }
+    
+    .login-card { 
+        padding: 40px 30px; 
+    }
+}

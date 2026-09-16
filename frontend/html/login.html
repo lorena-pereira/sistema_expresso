@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Expresso</title>
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+
+        <!-- Lado esquerdo azul: as informações -->
+        <div class="login-info">
+            <div class="brand">
+                <div class="brand-icon">
+                    <img src="../assets/login/Vector.png" alt="Logo">
+                </div>
+                <span>Sistema Expresso</span>
+            </div>
+
+            <div class="info-content">
+                <div class="hero-icon">
+                    <img src="../assets/login/Vector.png" alt="Logo grande">
+                </div>
+                <h2>Gestão ágil. <br>Resultado expressos.</h2>
+                <p class="hero-desc">Centralize o controle de suas operações e aumente a produtividade da sua equipe com o Sistema
+                    Expresso.</p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <img src="../assets/login/icon-check.png" alt="check">
+                        <p>Acesso seguro aos seus dados</p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="../assets/login/icon-check.png" alt="check">
+                        <p>Rotinas organizadas em um só lugar</p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="../assets/login/icon-check.png" alt="check">
+                        <p>Produtividade para toda a equipe</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-footer">
+                <p>© 2026 Sistema Expresso. Todos os direitos reservados.</p>
+            </div>
+        </div>
+
+        <!-- Lado direito branco: o formulário de login -->
+        <div class="login-right">
+            <div class="login-card">
+                <h1>Entrar no Sistema Expresso</h1>
+                <p class="subtitle">Informe suas credenciais para acessar sua conta.</p>
+
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="user">Usuário</label>
+                        <div class="input-wrapper">
+                            <img src="../assets/login/user.png" class="icon-left" alt="Ícone de usuário">
+                            <input type="text" id="user" placeholder="Digite seu usuário" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <div class="input-wrapper">
+                            <img src="../assets/login/locked-computer.png" class="icon-left" alt="Ícone de senha">
+                            <input type="password" id="password" placeholder="......." required>
+                            <img src="../assets/login/hide.png" class="icon-right" alt="Mostrar senha">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-entrar">ENTRAR</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
