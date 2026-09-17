@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Expresso - Em Desenvolvimento</title>
+    <!-- Ícones do Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- CSS Base / Navbar -->
+    <link rel="stylesheet" href="../css/index.css">
+    <!-- CSS Exclusivo da página -->
+    <link rel="stylesheet" href="../css/em-desenvolvimento.css">
+</head>
+<body>
+
+    <!-- Cabeçalho / Navbar -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <div class="brand-icon">
+                <i data-lucide="train-front"></i>
+            </div>
+            <span class="brand-title">SISTEMA EXPRESSO</span>
+        </div>
+
+        <div class="navbar-search">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" placeholder="Buscar no sistema...">
+        </div>
+
+        <div class="navbar-user">
+            <div class="user-info">
+                <span class="user-name">Usuário</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-container flex-center">
+        <div class="dev-card">
+            <div class="dev-icon">
+                <i data-lucide="wrench"></i>
+            </div>
+            <h2>Módulo em Desenvolvimento</h2>
+            <p>Estamos trabalhando para liberar este painel em breve. Acompanhe as próximas atualizações do Sistema Expresso.</p>
+            
+            <a href="index.html" class="btn-back">
+                <i data-lucide="arrow-left"></i> Voltar ao Início
+            </a>
+        </div>
+    </main>
+
+    <!-- Inicialização dos Ícones Lucide -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
