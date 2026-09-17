@@ -226,6 +226,12 @@ body {
     background-color: #18429c;
 }
 
+/** Remove o ícone nativo de ocultar senha do navegador da Microsoft **/
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
 /** Responsividade para telas menores **/
 @media (max-width: 900px) {
     .login-container { 
