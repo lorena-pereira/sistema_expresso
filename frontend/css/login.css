@@ -45,11 +45,15 @@ body {
     padding: 8px;
     border-radius: 10px;
     display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
 .brand-icon img {
     width: 20px;
+    height: 20px;
+    object-fit: contain;
 }
 
 /* conteúdos principais */

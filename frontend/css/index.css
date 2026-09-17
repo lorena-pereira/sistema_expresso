@@ -36,15 +36,16 @@ body {
     color: #FFFFFF;
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: 10%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.brand-icon svg {
-    width: 20px;
-    height: 20px;
+.brand-icon img {
+    width: 50%;
+    height: auto;
+    object-fit: contain;
 }
 
 .brand-title {
@@ -116,8 +117,8 @@ body {
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
 }
