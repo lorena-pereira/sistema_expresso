@@ -1,31 +1,31 @@
 [
     {
-        "users": "lorena",
+        "user": "lorena",
         "password": "lorena123",
-        "perfil": "admin"
+        "profile": "admin"
     },
 
     {
-        "users": "anaclara",
+        "user": "anaclara",
         "password": "anaclara123",
-        "perfil": "admin"
+        "profile": "admin"
     },
 
     {
-        "users": "daniel",
+        "user": "daniel",
         "password": "daniel123",
-        "perfil": "admin"
+        "profile": "admin"
     },
 
     {
-        "users": "higor",
+        "user": "higor",
         "password": "higor123",
-        "perfil": "admin"
+        "profile": "admin"
     },
 
     {
-        "users": "crijina",
+        "user": "crijina",
         "password": "crijina123",
-        "perfil": "admin"
+        "profile": "admin"
     }
 ]

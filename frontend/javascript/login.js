@@ -12,16 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         togglePasswordIcon.addEventListener('click', () => {
             const currentType = passwordInput.getAttribute('type');
 
-            let newType;
             if (currentType === 'password') {
-                newType = 'text';
+                passwordInput.setAttribute('type', 'text');
             } else {
-                newType = 'password';
-            }
-
-            if (newType === 'text') {
-                togglePasswordIcon.style.opacity = '1';
-            } else {
+                passwordInput.setAttribute('type', 'password');
                 togglePasswordIcon.style.opacity = '0.5';
             }
         });
@@ -55,9 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // verifica se a resposta teve sucesso
             if (response.ok && data.success) {
                 localStorage.setItem('usuarioLogado', usuario);
-                localStorage.setItem('perfilUsuario', data.perfil);
-
-                alert(`Login realizado com sucesso! Bem-vindo(a), ${data.perfil}.`);
+                localStorage.setItem('perfilUsuario', data.profile);
 
                 // redireciona para a página inicial
                 window.location.href = './index.html';
