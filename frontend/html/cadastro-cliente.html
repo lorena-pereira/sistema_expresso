@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Expresso</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../css/cadastro-cliente.css">
+</head>
+<body>
+    <!-- cabeçalho -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <div class="brand-icon">
+                <i data-lucide="train-front"></i>
+            </div>
+            <span class="brand-title">SISTEMA EXPRESSO</span>
+        </div>
+
+        <nav class="navbar-center">
+            <a href="index.html">Início</a>
+            <a href="#" class="active">Clientes</a>
+        </nav>
+
+        <div class="navbar-user">
+            <div class="user-info">
+                <span class="user-name">Usuário</span>
+                <span class="user-role">Perfil</span>
+            </div>
+            <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
+        </div>
+    </header> 
+
+    <!-- conteúdo principal -->
+    <main class="main-container">
+        <div class="form-card">
+            <h1>Cadastrar Cliente</h1>
+
+            <form id="formCadastroCliente">
+                <h3 class="section-title">DADOS BÁSICOS</h3>
+
+                <!-- pessoa física -->
+                <div id="dados-pf" class="form-grid">
+                    <div class="input-group full-width">
+                        <label>Nome completo <span class="req">*</span></label>
+                        <input type="text" name="nomeCompleto" placeholder="Digite o nome completo">
+                    </div>
+
+                    <div class="input-group">
+                        <label>CPF <span class="req">*</span></label>
+                        <input type="text" name="cpf" placeholder="000.000.000-00">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Telefone <span class="req">*</span></label>
+                        <input type="text" name="telefone" placeholder="(00)00000-0000">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Data de Nascimento <span class="req">*</span></label>
+                        <input type="text" name="dataNascimento" placeholder="DD/MM/AAAA">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Sexo <span class="req">*</span></label>
+                        <select name="Sexo">
+                            <option value="">Selecione</option>
+                            <option value="F">Feminino</option>
+                            <option value="M">Masculino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- pessoa jurídica -->
+                 <div id="dados-pj" class="form-grid" style="display: none;">
+                    <div class="input-group full width">
+                        <label>Nome fantasia <span class="req">*</span></label>
+                        <input type="text" name="nomeFantasia" placeholder="Digite o nome fantasia">
+                    </div>
+
+                    <div class="input-group">
+                        <label>CNPJ <span class="req">*</span></label>
+                        <input type="text" name="cnpj" placeholder="00.000.000/0000-00">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Telefone <span class="req">*</span></label>
+                        <input type="text" name="telefone" placeholder="(00)00000-0000">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Razão Social <span class="req">*</span></label>
+                        <input type="text" name="razaoSocial" placeholder="Digite a razão social">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Inscrição Estadual</label>
+                        <input type="text" name="inscricaoEstadual" placeholder="Digite a inscrição estadual">
+                    </div>
+                 </div>
+
+                 <!-- endereço (dos dois)-->
+                 <h3 class="section-title">ENDEREÇO</h3>
+
+                 <div class="form-grid">
+                    <div class="input-group">
+                        <label>CEP <span class="req">*</span></label>
+                        <input type="text" name="cep" placeholder="00000-000">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Bairro <span class="req">*</span></label>
+                        <input type="text" name="bairro" placeholder="Digite o bairro">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Rua <span class="req">*</span></label>
+                        <input type="text" name="rua" placeholder="Logradouro, avenida, praça...">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Complemento</label>
+                        <input type="text" name="complemento" placeholder="Apto, bloco, sala (opcional)">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Número <span class="req">*</span></label>
+                        <input type="text" name="numero" placeholder="N°">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Cidade <span class="req">*</span></label>
+                        <input type="text" name="cidade" placeholder="Digite a cidade">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Estado <span class="req">*</span></label>
+                        <select name="estado" id="estado">
+                            <option value="">Selecione</option>
+                            <option value="acre">AC</option>
+                            <option value="alagoas">AL</option>
+                            <option value="amapa">AP</option>
+                            <option value="amazonas">AM</option>
+                            <option value="bahia">BA</option>
+                            <option value="ceara">CE</option>
+                            <option value="espiritoSanto">ES</option>
+                            <option value="goias">GO</option>
+                            <option value="maranhao">MA</option>
+                            <option value="matoGrosso">MT</option>
+                            <option value="matoGrossoDoSul">MS</option>
+                            <option value="minasGerais">MG</option>
+                            <option value="para">PA</option>
+                            <option value="paraiba">PB</option>
+                            <option value="parana">PR</option>
+                            <option value="pernambuco">PE</option>
+                            <option value="piaui">PI</option>
+                            <option value="rioDeJaneiro">RJ</option>
+                            <option value="rioGrandeDoNorte">RN</option>
+                            <option value="rioGrandeDoSul">RS</option>
+                            <option value="rondonia">RO</option>
+                            <option value="roraima">RR</option>
+                            <option value="santaCatarina">SC</option>
+                            <option value="saoPaulo">SP</option>
+                            <option value="sergipe">SE</option>
+                            <option value="tocantins">TO</option>
+                        </select>
+                    </div>
+                 </div>
+
+                 <button type="submit" class="btn-submit">CADASTRAR CLIENTE</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="../javascript/cadastro-cliente.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
