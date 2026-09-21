@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Expresso - Início</title>
 
-    <script src="../javascript/index.js"></script>
     <!-- Ícones do Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="../css/index.css">
@@ -26,13 +25,21 @@
             <input type="text" id="search-input" placeholder="Buscar no sistema...">
         </div>
 
-        <div class="navbar-user">
+        <div class="navbar-user" id="user-dropdown-toggle">
             <div class="user-info">
                 <span class="user-name">Usuário</span>
                 <span class="user-role">Administrador</span>
             </div>
             <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
+            
+            <!-- Menu Suspenso (Dropdown) -->
+            <div class="user-dropdown" id="user-dropdown">
+                <button id="btn-logout" class="dropdown-item">
+                    <i data-lucide="log-out"></i> Sair do Sistema
+                </button>
+            </div>
         </div>
+
     </header>
 
     <!-- Conteúdo Principal -->
@@ -125,5 +132,8 @@
     <script>
         lucide.createIcons();
     </script>
+
+    <!-- Inicialização do JS da tela inicial -->
+    <script src="../javascript/index.js"></script>
 </body>
 </html>
