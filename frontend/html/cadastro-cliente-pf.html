@@ -34,10 +34,10 @@
         </div>
 
         <div class="user-dropdown" id="user-dropdown">
-                <button id="btn-logout" class="dropdown-item">
-                    <i data-lucide="log-out"></i> Sair do Sistema
-                </button>
-            </div>
+            <button id="btn-logout" class="dropdown-item">
+                <i data-lucide="log-out"></i> Sair do Sistema
+            </button>
+        </div>
         </div>
     </header>
 
@@ -46,7 +46,8 @@
         <div class="form-card">
             <h1>Cadastrar Cliente</h1>
             <p class="subtitle">Pessoa Física <span class="separator">•</span>
-                <span class="subtitle-info">Formulário de adesão padrão</span></p>
+                <span class="subtitle-info">Formulário de adesão padrão</span>
+            </p>
 
             <form id="formCadastroCliente">
                 <input type="hidden" name="tipoPessoa" value="PF">
@@ -56,30 +57,33 @@
                 <div id="dados-pf" class="form-grid">
                     <div class="input-group full-width">
                         <label>Nome completo <span class="req">*</span></label>
-                        <input type="text" name="nomeCompleto" placeholder="Digite o nome completo">
+                        <input type="text" name="nomeCompleto" placeholder="Digite o nome completo" required>
                     </div>
 
                     <div class="input-group">
                         <label>CPF <span class="req">*</span></label>
-                        <input type="text" name="cpf" placeholder="000.000.000-00">
+                        <input type="text" name="cpf" placeholder="000.000.000-00" required>
                     </div>
 
                     <div class="input-group">
                         <label>Telefone <span class="req">*</span></label>
-                        <input type="text" name="telefone" placeholder="(00)00000-0000">
+                        <input type="tel" name="telefone" placeholder="(00)00000-0000" required>
                     </div>
 
                     <div class="input-group">
                         <label>Data de Nascimento <span class="req">*</span></label>
-                        <input type="text" name="dataNascimento" placeholder="DD/MM/AAAA">
+                        <input type="date" name="dataNascimento" placeholder="DD/MM/AAAA" required>
                     </div>
 
                     <div class="input-group">
                         <label>Sexo <span class="req">*</span></label>
-                        <select name="Sexo">
+                        <select name="Sexo" required>
                             <option value="">Selecione</option>
                             <option value="F">Feminino</option>
                             <option value="M">Masculino</option>
+                            <option value="NB">Não Binário</option>
+                            <option value="I">Intersexo</option>
+                            <option value="NE">Não especificado</option>
                         </select>
                     </div>
                 </div>
@@ -89,65 +93,66 @@
 
                 <div class="form-grid">
                     <div class="input-group">
-                        <label>CEP <span class="req">*</span></label>
+                        <label>CEP</label>
                         <input type="text" name="cep" placeholder="00000-000">
                     </div>
 
                     <div class="input-group">
                         <label>Bairro <span class="req">*</span></label>
-                        <input type="text" name="bairro" placeholder="Digite o bairro">
+                        <input type="text" name="bairro" placeholder="Digite o bairro" required>
                     </div>
 
                     <div class="input-group full-width">
                         <label>Rua <span class="req">*</span></label>
-                        <input type="text" name="rua" placeholder="Logradouro, avenida, praça...">
+                        <input type="text" name="rua" placeholder="Logradouro, avenida, praça..." required>
                     </div>
 
                     <div class="input-group">
                         <label>Complemento</label>
-                        <input type="text" name="complemento" placeholder="Apto, bloco, sala (opcional)">
+                        <input type="text" name="complemento" placeholder="Apto, bloco, sala">
                     </div>
 
                     <div class="input-group">
                         <label>Número <span class="req">*</span></label>
-                        <input type="text" name="numero" placeholder="N°">
+                        <input type="text" name="numero" placeholder="N°" required>
                     </div>
 
                     <div class="input-group">
                         <label>Cidade <span class="req">*</span></label>
-                        <input type="text" name="cidade" placeholder="Digite a cidade">
+                        <input type="text" name="cidade" placeholder="Digite a cidade" required>
                     </div>
 
                     <div class="input-group">
                         <label>Estado <span class="req">*</span></label>
-                        <select name="estado" id="estado">
-                            <option value="">Selecione</option>
-                            <option value="acre">AC</option>
-                            <option value="alagoas">AL</option>
-                            <option value="amapa">AP</option>
-                            <option value="amazonas">AM</option>
-                            <option value="bahia">BA</option>
-                            <option value="ceara">CE</option>
-                            <option value="espiritoSanto">ES</option>
-                            <option value="goias">GO</option>
-                            <option value="maranhao">MA</option>
-                            <option value="matoGrosso">MT</option>
-                            <option value="matoGrossoDoSul">MS</option>
-                            <option value="minasGerais">MG</option>
-                            <option value="para">PA</option>
-                            <option value="paraiba">PB</option>
-                            <option value="parana">PR</option>
-                            <option value="pernambuco">PE</option>
-                            <option value="piaui">PI</option>
-                            <option value="rioDeJaneiro">RJ</option>
-                            <option value="rioGrandeDoNorte">RN</option>
-                            <option value="rioGrandeDoSul">RS</option>
-                            <option value="rondonia">RO</option>
-                            <option value="roraima">RR</option>
-                            <option value="santaCatarina">SC</option>
-                            <option value="saoPaulo">SP</option>
-                            <option value="sergipe">SE</option>
-                            <option value="tocantins">TO</option>
+                        <select name="estado" id="estado" required>
+                            <option value="">Selecione o estado</option>
+                            <option value="AC">AC</option>
+                            <option value="AL">AL</option>
+                            <option value="AP">AP</option>
+                            <option value="AM">AM</option>
+                            <option value="BA">BA</option>
+                            <option value="CE">CE</option>
+                            <option value="DF">DF</option>
+                            <option value="ES">ES</option>
+                            <option value="GO">GO</option>
+                            <option value="MA">MA</option>
+                            <option value="MT">MT</option>
+                            <option value="MS">MS</option>
+                            <option value="MG">MG</option>
+                            <option value="PA">PA</option>
+                            <option value="PB">PB</option>
+                            <option value="PR">PR</option>
+                            <option value="PE">PE</option>
+                            <option value="PI">PI</option>
+                            <option value="RJ">RJ</option>
+                            <option value="RN">RN</option>
+                            <option value="RS">RS</option>
+                            <option value="RO">RO</option>
+                            <option value="RR">RR</option>
+                            <option value="SC">SC</option>
+                            <option value="SP">SP</option>
+                            <option value="SE">SE</option>
+                            <option value="TO">TO</option>
                         </select>
                     </div>
                 </div>
