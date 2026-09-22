@@ -42,6 +42,47 @@ app.post('/login', (req, res) => {
     }
 });
 
+// caminho /cadastrar-cliente
+app.post('/cadastrar-cliente', (req, res) => {
+    // req.body contém os dados que enviamos pelo fetch no front-end
+    const novoCliente = req.body; 
+
+    // procura o arquivo JSON de clientes
+    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
+
+    try {
+        let clientes = [];
+        
+        // verifica se o arquivo já existe para ler os dados antigos
+        if (fs.existsSync(clientesFilePath)) {
+            const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
+            // se o arquivo estiver vazio, previne erros no parse
+            if (rawData) {
+                clientes = JSON.parse(rawData);
+            }
+        }
+
+        // adiciona um ID único simples e salva o novo cliente na lista
+        novoCliente.id = Date.now(); 
+        clientes.push(novoCliente);
+
+        // grava a lista atualizada de volta no arquivo
+        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Cliente cadastrado com sucesso!" 
+        });
+
+    } catch (error) {
+        console.error("Erro interno ao cadastrar:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Erro no servidor ao salvar o cliente." 
+        });
+    }
+});
+
 app.listen(3000, () => 
     console.log('Servidor iniciado na porta 3000')
 );

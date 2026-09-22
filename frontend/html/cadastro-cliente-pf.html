@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Expresso</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../javascript/auth.js"></script>
     <link rel="stylesheet" href="../css/cadastro-cliente.css">
 </head>
+
 <body>
     <!-- cabeçalho -->
     <header class="navbar">
@@ -22,21 +25,31 @@
             <a href="#" class="active">Clientes</a>
         </nav>
 
-        <div class="navbar-user">
+        <div class="navbar-user" id="user-dropdown-toggle">
             <div class="user-info">
                 <span class="user-name">Usuário</span>
                 <span class="user-role">Perfil</span>
             </div>
             <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
         </div>
-    </header> 
+
+        <div class="user-dropdown" id="user-dropdown">
+                <button id="btn-logout" class="dropdown-item">
+                    <i data-lucide="log-out"></i> Sair do Sistema
+                </button>
+            </div>
+        </div>
+    </header>
 
     <!-- conteúdo principal -->
     <main class="main-container">
         <div class="form-card">
             <h1>Cadastrar Cliente</h1>
+            <p class="subtitle">Pessoa Física <span class="separator">•</span>
+                <span class="subtitle-info">Formulário de adesão padrão</span></p>
 
             <form id="formCadastroCliente">
+                <input type="hidden" name="tipoPessoa" value="PF">
                 <h3 class="section-title">DADOS BÁSICOS</h3>
 
                 <!-- pessoa física -->
@@ -71,38 +84,10 @@
                     </div>
                 </div>
 
-                <!-- pessoa jurídica -->
-                 <div id="dados-pj" class="form-grid" style="display: none;">
-                    <div class="input-group full width">
-                        <label>Nome fantasia <span class="req">*</span></label>
-                        <input type="text" name="nomeFantasia" placeholder="Digite o nome fantasia">
-                    </div>
+                <!-- endereço -->
+                <h3 class="section-title">ENDEREÇO</h3>
 
-                    <div class="input-group">
-                        <label>CNPJ <span class="req">*</span></label>
-                        <input type="text" name="cnpj" placeholder="00.000.000/0000-00">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Telefone <span class="req">*</span></label>
-                        <input type="text" name="telefone" placeholder="(00)00000-0000">
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Razão Social <span class="req">*</span></label>
-                        <input type="text" name="razaoSocial" placeholder="Digite a razão social">
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Inscrição Estadual</label>
-                        <input type="text" name="inscricaoEstadual" placeholder="Digite a inscrição estadual">
-                    </div>
-                 </div>
-
-                 <!-- endereço (dos dois)-->
-                 <h3 class="section-title">ENDEREÇO</h3>
-
-                 <div class="form-grid">
+                <div class="form-grid">
                     <div class="input-group">
                         <label>CEP <span class="req">*</span></label>
                         <input type="text" name="cep" placeholder="00000-000">
@@ -165,14 +150,17 @@
                             <option value="tocantins">TO</option>
                         </select>
                     </div>
-                 </div>
+                </div>
 
-                 <button type="submit" class="btn-submit">CADASTRAR CLIENTE</button>
+                <button type="submit" class="btn-submit">CADASTRAR CLIENTE</button>
             </form>
         </div>
     </main>
 
+    <script src="../javascript/sessao.js"></script>
+    <script src="../javascript/index.js"></script>
     <script src="../javascript/cadastro-cliente.js"></script>
     <script>lucide.createIcons();</script>
 </body>
+
 </html>
