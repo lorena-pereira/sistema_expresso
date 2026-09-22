@@ -48,11 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // verifica se a resposta teve sucesso
             if (response.ok && data.success) {
-                localStorage.setItem('usuarioLogado', usuario);
-                localStorage.setItem('perfilUsuario', data.profile);
+                // Salva o objeto completo no localStorage
+                localStorage.setItem('usuarioLogado', JSON.stringify({
+                    nome: usuario,
+                    perfil: data.profile || 'Usuário'
+                }));
 
-                // redireciona para a página inicial
-                window.location.href = './index.html';
+                // Redireciona substituindo a página no histórico
+                window.location.replace('./index.html');
             } else {
                 alert(data.message || 'Erro ao realizar login.');
 
