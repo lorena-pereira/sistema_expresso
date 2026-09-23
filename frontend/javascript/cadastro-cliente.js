@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.success) {
                     alert('Cliente cadastrado com sucesso!');
-                    window.location.href = 'listagem-clientes.html';
+                    window.location.href = './clientes.html';
                 } else {
                     alert('Erro ao cadastrar: ' + result.message);
                 }
@@ -77,14 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return v;
     };
 
-    const mascaraData = (v) => {
-        v = v.replace(/\D/g, "");
-        if (v.length > 8) v = v.slice(0, 8);
-        v = v.replace(/(\d{2})(\d)/, "$1/$2");
-        v = v.replace(/(\d{2})(\d)/, "$1/$2");
-        return v;
-    };
-
     // capturar os campos no ecrã e aplicar a escuta 
     const inputCpf = document.querySelector('input[name="cpf"]');
     if (inputCpf) {
@@ -107,10 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputCep.addEventListener('input', (e) => e.target.value = mascaraCEP(e.target.value));
     }
 
-    const inputData = document.querySelector('input[name="dataNascimento"]');
-    if (inputData) {
-        inputData.addEventListener('input', (e) => e.target.value = mascaraData(e.target.value));
-    }
 
     const inputCepAuto = document.querySelector('input[name="cep"]');
     const inputRua = document.querySelector('input[name="rua"]');
