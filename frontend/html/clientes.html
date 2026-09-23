@@ -6,7 +6,7 @@
     <title>Sistema Expresso - Clientes</title>
     
     <!-- Script de Proteção e Ícones -->
-    <script src="../js/auth.js"></script>
+    <script src="../javascript/auth.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="stylesheet" href="../css/index.css">
@@ -127,6 +127,80 @@
                     </div>
                     <i data-lucide="chevron-right" class="arrow-icon"></i>
                 </a>
+            </div>
+        </div>
+    </div>
+
+        <!-- MODAL DETALHES DO CLIENTE -->
+    <div class="modal-overlay" id="modal-detalhes-cliente">
+        <div class="modal-card modal-detalhes">
+            <button class="modal-close" id="btn-fechar-detalhes">
+                <i data-lucide="x"></i>
+            </button>
+
+            <div class="modal-header-detalhes">
+                <h2>Detalhes do cliente</h2>
+                <p>Visualize os dados principais e altere rapidamente o status da conta.</p>
+            </div>
+
+            <!-- Perfil Principal do Cliente -->
+            <div class="cliente-profile-header">
+                <div class="avatar-circle-lg" id="detalhe-avatar">A</div>
+                <div class="profile-info">
+                    <div class="profile-title-group">
+                        <h3 id="detalhe-nome">Ana Clara Costa</h3>
+                        <span class="badge-status ativo" id="detalhe-badge-status">
+                            <span class="badge-dot"></span> <span id="detalhe-badge-texto">Ativo</span>
+                        </span>
+                    </div>
+                    <p id="detalhe-subtitulo">Cliente selecionado da listagem principal.</p>
+                </div>
+            </div>
+
+            <!-- Seção Informações -->
+            <div class="info-section">
+                <span class="section-label">INFORMAÇÕES</span>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <span class="info-label" id="detalhe-doc-label">CPF</span>
+                        <strong class="info-value" id="detalhe-doc-val">000.111.222-33</strong>
+                    </div>
+                    <div class="info-box">
+                        <span class="info-label">STATUS</span>
+                        <strong class="info-value" id="detalhe-status-val">Ativo</strong>
+                    </div>
+                    <div class="info-box">
+                        <span class="info-label">E-MAIL</span>
+                        <strong class="info-value" id="detalhe-email-val">ana.clara@exemplo.com</strong>
+                    </div>
+                    <div class="info-box">
+                        <span class="info-label">TELEFONE</span>
+                        <strong class="info-value" id="detalhe-telefone-val">(11) 99876-4321</strong>
+                    </div>
+                </div>
+                <div class="info-box info-box-full">
+                    <span class="info-label">ENDEREÇO</span>
+                    <strong class="info-value" id="detalhe-obs-val">Rua Caminho Três, 49 - Zabelê, Vitória da Conquista - BA</strong>
+                </div>
+            </div>
+
+            <!-- Seção Ações -->
+            <div class="action-section">
+                <span class="section-label">AÇÕES</span>
+                <div class="actions-grid">
+                    <a href="#" id="btn-acao-editar" class="action-card btn-editar">
+                        <strong>Editar</strong>
+                        <span>Atualizar dados do cliente</span>
+                    </a>
+                    <button type="button" id="btn-acao-desativar" class="action-card btn-desativar">
+                        <strong>Desativar</strong>
+                        <span>Suspender o acesso</span>
+                    </button>
+                    <button type="button" id="btn-acao-ativar" class="action-card btn-ativar">
+                        <strong>Ativar</strong>
+                        <span>Restaurar o acesso</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

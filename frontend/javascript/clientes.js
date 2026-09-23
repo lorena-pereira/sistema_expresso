@@ -3,50 +3,70 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputBusca = document.getElementById('input-busca-cliente');
     const selectStatus = document.getElementById('select-filtro-status');
 
+    // 1. Elementos do Modal de Cadastrar (Tipo de Pessoa)
+    const btnAbrirCadastrar = document.getElementById('btn-abrir-modal');
+    const btnFecharCadastrar = document.getElementById('btn-fechar-modal');
+    const modalCadastrar = document.getElementById('modal-tipo-pessoa');
+
+    // 2. Elementos do Modal de Detalhes
+    const modalDetalhes = document.getElementById('modal-detalhes-cliente');
+    const btnFecharDetalhes = document.getElementById('btn-fechar-detalhes');
+    
     let todosClientes = [];
 
-    // 1. Carrega os dados do arquivo JSON
+    // --- LÓGICA DO MODAL DE CADASTRAR ---
+    if (btnAbrirCadastrar && modalCadastrar) {
+        btnAbrirCadastrar.addEventListener('click', () => {
+            modalCadastrar.classList.add('active');
+        });
+
+        if (btnFecharCadastrar) {
+            btnFecharCadastrar.addEventListener('click', () => {
+                modalCadastrar.classList.remove('active');
+            });
+        }
+
+        modalCadastrar.addEventListener('click', (e) => {
+            if (e.target === modalCadastrar) {
+                modalCadastrar.classList.remove('active');
+            }
+        });
+    }
+
+    // --- CARREGAMENTO DE DADOS E TABELA ---
     async function carregarClientes() {
         try {
             const response = await fetch('../../backend/data/clientes.json');
-            if (!response.ok) throw new Error('Erro ao carregar lista de clientes');
-            
+            if (!response.ok) throw new Error('Erro ao buscar dados');
             todosClientes = await response.json();
             renderizarClientes(todosClientes);
         } catch (error) {
-            console.error('Erro:', error);
-            listaContainer.innerHTML = '<p style="padding: 20px; color: #EF4444; text-align: center;">Erro ao carregar dados dos clientes.</p>';
+            console.error(error);
         }
     }
 
-    // 2. Renderiza as linhas da tabela
     function renderizarClientes(clientes) {
+        if (!listaContainer) return;
         listaContainer.innerHTML = '';
 
         if (clientes.length === 0) {
-            listaContainer.innerHTML = `
-                <div style="padding: 30px; text-align: center; color: #64748B;">
-                    Nenhum cliente encontrado.
-                </div>`;
+            listaContainer.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748B;">Nenhum cliente encontrado.</div>`;
             return;
         }
 
         clientes.forEach(cliente => {
-            // Define o nome principal (Nome Completo para PF ou Razão Social para PJ)
             const nomeExibicao = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
-            
-            // Identifica se usa CPF ou CNPJ
             const documentoExibicao = cliente.cpf || cliente.cnpj || 'Não informado';
-
-            // Pega a primeira letra para o avatar
             const inicial = nomeExibicao.charAt(0).toUpperCase();
-
-            // Status (se não houver campo 'status' no JSON, define como 'Ativo' por padrão)
             const statusTexto = cliente.status || 'Ativo';
             const statusClass = statusTexto.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
 
             const row = document.createElement('div');
             row.className = 'table-row';
+            row.style.cursor = 'pointer';
+
+            row.addEventListener('click', () => abrirModalDetalhes(cliente));
+
             row.innerHTML = `
                 <div class="col-nome">
                     <div class="avatar-circle">${inicial}</div>
@@ -65,26 +85,25 @@ document.addEventListener('DOMContentLoaded', () => {
             listaContainer.appendChild(row);
         });
 
-        // Atualiza os ícones Lucide
-        if (window.lucide) {
-            lucide.createIcons();
-        }
+        if (window.lucide) lucide.createIcons();
     }
 
-    // 3. Aplica a busca por Nome, CPF/CNPJ ou Cidade
+    // --- FUNÇÃO DE BUSCA E FILTRO ---
     function aplicarFiltros() {
-        const termoBusca = inputBusca.value.toLowerCase().trim();
-        const statusSelecionado = selectStatus.value;
+        const termoBusca = inputBusca ? inputBusca.value.toLowerCase().trim() : '';
+        const statusSelecionado = selectStatus ? selectStatus.value : 'todos';
 
         const clientesFiltrados = todosClientes.filter(cliente => {
             const nome = (cliente.nomeCompleto || cliente.razaoSocial || '').toLowerCase();
             const doc = (cliente.cpf || cliente.cnpj || '').toLowerCase();
             const cidade = (cliente.cidade || '').toLowerCase();
 
+            // Verifica se busca combina com Nome, CPF/CNPJ ou Cidade
             const bateBusca = nome.includes(termoBusca) || doc.includes(termoBusca) || cidade.includes(termoBusca);
             
+            // Verifica o status selecionado
             const statusAtual = cliente.status || 'Ativo';
-            const bateStatus = statusSelecionado === 'todos' || statusAtual === statusSelecionado;
+            const bateStatus = statusSelecionado === 'todos' || statusAtual.toLowerCase() === statusSelecionado.toLowerCase();
 
             return bateBusca && bateStatus;
         });
@@ -92,37 +111,44 @@ document.addEventListener('DOMContentLoaded', () => {
         renderizarClientes(clientesFiltrados);
     }
 
-    // Escutadores de eventos
-    inputBusca.addEventListener('input', aplicarFiltros);
-    selectStatus.addEventListener('change', aplicarFiltros);
+    // --- ESCUTADORES DE EVENTOS PARA BUSCA ---
+    if (inputBusca) inputBusca.addEventListener('input', aplicarFiltros);
+    if (selectStatus) selectStatus.addEventListener('change', aplicarFiltros);
 
-    // Inicializa a listagem
-    carregarClientes();
-});
+    // --- MODAL DE DETALHES ---
+    function abrirModalDetalhes(cliente) {
+        const nome = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
+        const docLabel = cliente.cpf ? 'CPF' : 'CNPJ';
+        const docValue = cliente.cpf || cliente.cnpj || 'Não informado';
+        const statusVal = cliente.status || 'Ativo';
+        const statusClass = statusVal.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
 
-// Adicione este bloco dentro do evento DOMContentLoaded do seu clientes.js:
+        document.getElementById('detalhe-avatar').textContent = nome.charAt(0).toUpperCase();
+        document.getElementById('detalhe-nome').textContent = nome;
+        document.getElementById('detalhe-doc-label').textContent = docLabel;
+        document.getElementById('detalhe-doc-val').textContent = docValue;
+        document.getElementById('detalhe-status-val').textContent = statusVal;
+        document.getElementById('detalhe-badge-texto').textContent = statusVal;
+        
+        const badge = document.getElementById('detalhe-badge-status');
+        if (badge) badge.className = `badge-status ${statusClass}`;
 
-const btnAbrirModal = document.getElementById('btn-abrir-modal');
-const btnFecharModal = document.getElementById('btn-fechar-modal');
-const modalOverlay = document.getElementById('modal-tipo-pessoa');
+        document.getElementById('detalhe-email-val').textContent = cliente.email || 'Não informado';
+        document.getElementById('detalhe-telefone-val').textContent = cliente.telefone || 'Não informado';
 
-if (btnAbrirModal && modalOverlay) {
-    // Abrir modal
-    btnAbrirModal.addEventListener('click', () => {
-        modalOverlay.classList.add('active');
-    });
+        const end = [cliente.rua, cliente.numero, cliente.bairro, cliente.cidade, cliente.estado]
+            .filter(Boolean).join(', ');
+        document.getElementById('detalhe-obs-val').textContent = end || 'Sem endereço cadastrado';
 
-    // Fechar modal no botão 'X'
-    if (btnFecharModal) {
-        btnFecharModal.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
+        if (modalDetalhes) modalDetalhes.classList.add('active');
+    }
+
+    if (btnFecharDetalhes && modalDetalhes) {
+        btnFecharDetalhes.addEventListener('click', () => modalDetalhes.classList.remove('active'));
+        modalDetalhes.addEventListener('click', (e) => {
+            if (e.target === modalDetalhes) modalDetalhes.classList.remove('active');
         });
     }
 
-    // Fechar modal ao clicar fora da caixa do modal
-    modalOverlay.addEventListener('click', (event) => {
-        if (event.target === modalOverlay) {
-            modalOverlay.classList.remove('active');
-        }
-    });
-}
+    carregarClientes();
+});
