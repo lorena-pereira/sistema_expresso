@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (result.success) {
                     alert('Cliente cadastrado com sucesso!');
-                    window.location.href = './clientes.html';
+                    window.location.href = 'clientes.html';
                 } else {
                     alert('Erro ao cadastrar: ' + result.message);
                 }

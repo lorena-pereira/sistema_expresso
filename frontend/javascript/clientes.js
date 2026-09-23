@@ -120,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const nome = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
         const docLabel = cliente.cpf ? 'CPF' : 'CNPJ';
         const docValue = cliente.cpf || cliente.cnpj || 'Não informado';
+        const extraLabel = cliente.tipo === 'PF' ? 'SEXO' : 'INSC. ESTADUAL';
+        const extraValue = cliente.tipo === 'PF' ? (cliente.sexo || 'Não informado') : (cliente.inscricaoEstadual || 'Não informado');
         const statusVal = cliente.status || 'Ativo';
         const statusClass = statusVal.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
 
@@ -127,13 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detalhe-nome').textContent = nome;
         document.getElementById('detalhe-doc-label').textContent = docLabel;
         document.getElementById('detalhe-doc-val').textContent = docValue;
+        document.getElementById('detalhe-extra-label').textContent = extraLabel;
+        document.getElementById('detalhe-sexo-val').textContent = extraValue;
         document.getElementById('detalhe-status-val').textContent = statusVal;
         document.getElementById('detalhe-badge-texto').textContent = statusVal;
         
         const badge = document.getElementById('detalhe-badge-status');
         if (badge) badge.className = `badge-status ${statusClass}`;
 
-        document.getElementById('detalhe-email-val').textContent = cliente.email || 'Não informado';
         document.getElementById('detalhe-telefone-val').textContent = cliente.telefone || 'Não informado';
 
         const end = [cliente.rua, cliente.numero, cliente.bairro, cliente.cidade, cliente.estado]
