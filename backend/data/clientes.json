@@ -1,0 +1,36 @@
+[
+  {
+    "tipoPessoa": "PF",
+    "nomeCompleto": "Lorena Pereira Oliveira",
+    "cpf": "111.111.111-22",
+    "telefone": "(77) 98989-8978",
+    "dataNascimento": "2004-03-08",
+    "Sexo": "F",
+    "cep": "45077-000",
+    "bairro": "Zabelê",
+    "rua": "Avenida Brumado",
+    "complemento": "Apto. 202",
+    "numero": "2",
+    "cidade": "Vitória da Conquista",
+    "estado": "BA",
+    "tipo": "PF",
+    "id": 1790200741672
+  },
+  {
+    "tipoPessoa": "PJ",
+    "nomeFantasia": "FR Tecno",
+    "cnpj": "45.122.988/7331-11",
+    "telefone": "(77) 99554-1230",
+    "razaoSocial": "FR Tecno LTDA",
+    "inscricaoEstadual": "",
+    "cep": "46190-000",
+    "bairro": "São Cristóvão",
+    "rua": "Avenida Botuporã",
+    "complemento": "",
+    "numero": "15",
+    "cidade": "Paramirim",
+    "estado": "BA",
+    "tipo": "PJ",
+    "id": 1790201046234
+  }
+]
