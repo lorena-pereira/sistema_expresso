@@ -19,11 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
-            // pega o valor do input hidden (PF ou PJ) da página atual
             const tipoPessoaInput = document.querySelector('input[name="tipoPessoa"]');
-            if (tipoPessoaInput) {
-                data.tipo = tipoPessoaInput.value;
-            }
+            if (tipoPessoaInput) data.tipo = tipoPessoaInput.value;
 
             try {
                 // envia os dados para o servidor Node.js
@@ -43,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.success) {
                     alert(emEdicao ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
                     window.location.assign('./clientes.html');
-                    return;
                 } else {
                     alert((emEdicao ? 'Erro ao atualizar: ' : 'Erro ao cadastrar: ') + result.message);
                 }

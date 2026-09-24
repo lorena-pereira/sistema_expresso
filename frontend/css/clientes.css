@@ -532,3 +532,133 @@
     color: #16A34A;
 }
 .btn-ativar span { color: #86EFAC; }
+
+/* --- Modal de Confirmação de Status --- */
+.modal-card-status {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+
+.status-header-aviso {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.status-header-aviso.perigo {
+    color: #DC2626; /* Vermelho */
+}
+
+.status-header-aviso.sucesso {
+    color: #16A34A; /* Verde */
+}
+
+.modal-card-status h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-top: -8px;
+}
+
+.status-cliente-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: #FAFAFA;
+}
+
+.label-mini {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.status-grid-dados {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.full-grid {
+    grid-column: span 2;
+}
+
+.status-texto-confirmacao p {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 4px;
+}
+
+.status-texto-confirmacao span {
+    font-size: 13px;
+    color: #64748B;
+    line-height: 1.4;
+}
+
+.status-botoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-acao-principal {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #FFFFFF;
+    transition: background 0.2s;
+}
+
+.btn-acao-principal.desativar {
+    background-color: #EF4444;
+}
+.btn-acao-principal.desativar:hover {
+    background-color: #DC2626;
+}
+
+.btn-acao-principal.ativar {
+    background-color: #10B981;
+}
+.btn-acao-principal.ativar:hover {
+    background-color: #059669;
+}
+
+.btn-acao-secundaria {
+    width: 100%;
+    padding: 14px;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-acao-secundaria:hover {
+    background: #F1F5F9;
+}

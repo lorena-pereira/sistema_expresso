@@ -294,3 +294,58 @@ body {
 .lgpd-notice i { 
     width: 14px; height: 14px; 
 }
+
+/* --- Notificação Toast --- */
+.toast-notification {
+    position: fixed;
+    top: 90px;
+    right: -400px; /* Fica escondido fora do ecrã inicialmente */
+    background-color: #16A34A; /* Verde de sucesso */
+    color: #FFFFFF;
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 9999;
+    /* Animação elástica suave de entrada */
+    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+}
+
+.toast-notification.show {
+    right: 30px; /* Desliza para dentro do ecrã */
+}
+
+.toast-notification svg {
+    width: 24px;
+    height: 24px;
+}
+
+.toast-notification span {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* --- Botão Voltar --- */
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748B; /* Cinza discreto */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-voltar:hover {
+    color: #2563EB; /* Azul de destaque ao passar o rato */
+    transform: translateX(-4px); /* Animação subtil para a esquerda */
+}
+
+.btn-voltar svg {
+    width: 18px;
+    height: 18px;
+}
