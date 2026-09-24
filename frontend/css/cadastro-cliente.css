@@ -322,3 +322,26 @@ body {
     font-size: 15px;
     font-weight: 600;
 }
+
+/* --- Botão Voltar --- */
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748B; /* Cinza discreto */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-voltar:hover {
+    color: #2563EB; /* Azul de destaque ao passar o rato */
+    transform: translateX(-4px); /* Animação subtil para a esquerda */
+}
+
+.btn-voltar svg {
+    width: 18px;
+    height: 18px;
+}
