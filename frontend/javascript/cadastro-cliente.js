@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     // lógica para alternar entre Pessoa Física e Jurídica
     const form = document.getElementById('formCadastroCliente');
+    const clienteId = new URLSearchParams(window.location.search).get('id');
+    const emEdicao = Boolean(clienteId);
+
+    if (emEdicao) {
+        const titulo = document.querySelector('.form-card h1');
+        const botao = form ? form.querySelector('button[type="submit"]') : null;
+        if (titulo) titulo.textContent = 'Editar Cliente';
+        if (botao) botao.textContent = 'SALVAR ALTERAÇÕES';
+    }
 
     if (form) {
         form.addEventListener('submit', async (event) => {
@@ -18,8 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // envia os dados para o servidor Node.js
-                const response = await fetch('http://localhost:3000/cadastrar-cliente', {
-                    method: 'POST',
+                const response = await fetch(emEdicao
+                    ? `http://localhost:3000/clientes/${encodeURIComponent(clienteId)}`
+                    : 'http://localhost:3000/cadastrar-cliente', {
+                    method: emEdicao ? 'PUT' : 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -30,10 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('Cliente cadastrado com sucesso!');
-                    window.location.href = './clientes.html';
+                    alert(emEdicao ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
+                    window.location.assign('./clientes.html');
+                    return;
                 } else {
-                    alert('Erro ao cadastrar: ' + result.message);
+                    alert((emEdicao ? 'Erro ao atualizar: ' : 'Erro ao cadastrar: ') + result.message);
                 }
             } catch (error) {
                 console.error('Erro na requisição:', error);
@@ -41,6 +53,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    async function carregarClienteParaEdicao() {
+        if (!emEdicao || !form) return;
+
+        try {
+            const response = await fetch('../../backend/data/clientes.json');
+            if (!response.ok) throw new Error('Erro ao buscar cliente');
+
+            const clientes = await response.json();
+            const cliente = clientes.find(item => String(item.id) === clienteId);
+
+            if (!cliente) {
+                alert('Cliente não encontrado.');
+                window.location.href = './clientes.html';
+                return;
+            }
+
+            Object.entries(cliente).forEach(([campo, valor]) => {
+                const input = form.elements.namedItem(campo);
+                if (input && typeof input.value !== 'undefined') input.value = valor ?? '';
+            });
+        } catch (error) {
+            console.error('Erro ao carregar cliente:', error);
+            alert('Não foi possível carregar os dados do cliente.');
+        }
+    }
+
+    carregarClienteParaEdicao();
 
     // funções de formatação usando Regex
     const mascaraCPF = (v) => {

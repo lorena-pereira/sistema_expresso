@@ -83,6 +83,43 @@ app.post('/cadastrar-cliente', (req, res) => {
     }
 });
 
+// caminho /clientes/:id
+app.put('/clientes/:id', (req, res) => {
+    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
+
+    try {
+        const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
+        const clientes = rawData ? JSON.parse(rawData) : [];
+        const clienteIndex = clientes.findIndex(cliente => String(cliente.id) === req.params.id);
+
+        if (clienteIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cliente não encontrado.'
+            });
+        }
+
+        clientes[clienteIndex] = {
+            ...clientes[clienteIndex],
+            ...req.body,
+            id: clientes[clienteIndex].id
+        };
+
+        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+
+        return res.status(200).json({
+            success: true,
+            message: 'Cliente atualizado com sucesso!'
+        });
+    } catch (error) {
+        console.error('Erro interno ao atualizar:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro no servidor ao atualizar o cliente.'
+        });
+    }
+});
+
 app.listen(3000, () => 
     console.log('Servidor iniciado na porta 3000')
 );

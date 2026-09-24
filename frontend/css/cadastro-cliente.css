@@ -173,6 +173,10 @@ body {
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
+.form-card .btn-back-circle {
+    margin-bottom: 20px;
+}
+
 /* título principal do card */
 .form-card h1 { 
     margin-top: 0; 

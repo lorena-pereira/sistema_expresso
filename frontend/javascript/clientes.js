@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Elementos do Modal de Detalhes
     const modalDetalhes = document.getElementById('modal-detalhes-cliente');
     const btnFecharDetalhes = document.getElementById('btn-fechar-detalhes');
+    const btnAcaoEditar = document.getElementById('btn-acao-editar');
     
     let todosClientes = [];
 
@@ -139,6 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const end = [cliente.rua, cliente.numero, cliente.bairro, cliente.cidade, cliente.estado]
             .filter(Boolean).join(', ');
         document.getElementById('detalhe-obs-val').textContent = end || 'Sem endereço cadastrado';
+
+        if (btnAcaoEditar && cliente.id) {
+            const paginaEdicao = cliente.tipo === 'PJ' ? 'cadastro-cliente-pj.html' : 'cadastro-cliente-pf.html';
+            btnAcaoEditar.href = `${paginaEdicao}?id=${encodeURIComponent(cliente.id)}`;
+        }
 
         if (modalDetalhes) modalDetalhes.classList.add('active');
     }
