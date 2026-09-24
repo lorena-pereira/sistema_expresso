@@ -179,6 +179,67 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIRMAÇÃO DE STATUS (ATIVAR / DESATIVAR) -->
+    <div class="modal-overlay" id="modal-confirmar-status">
+        <div class="modal-card-status">
+            
+            <!-- Cabeçalho Dinâmico (Altera cor e texto via JS) -->
+            <div class="status-header-aviso" id="status-topo-aviso">
+                <i data-lucide="alert-triangle" id="status-icone-topo"></i>
+                <span id="status-titulo-topo">AÇÃO DESTRUTIVA</span>
+            </div>
+            
+            <h2 id="status-titulo-principal">Desativar Cliente</h2>
+
+            <!-- Cartão interno com os dados do cliente (sem foto) -->
+            <div class="status-cliente-card">
+                <div class="info-bloco-topo">
+                    <span class="label-mini" id="status-label-nome">NOME DO CLIENTE</span>
+                    <strong id="status-val-nome">Nome do Cliente</strong>
+                </div>
+
+                <div class="status-grid-dados">
+                    <div>
+                        <span class="label-mini" id="status-label-doc">CPF</span>
+                        <strong id="status-val-doc">000.000.000-00</strong>
+                    </div>
+                    <div>
+                        <span class="label-mini">TELEFONE</span>
+                        <strong id="status-val-telefone">(00) 00000-0000</strong>
+                    </div>
+
+                    <!-- Campos específicos de PF (Ocultados dinamicamente se for PJ) -->
+                    <div class="campos-pf-exclusivos">
+                        <span class="label-mini">NASCIMENTO</span>
+                        <strong id="status-val-nascimento">--/--/----</strong>
+                    </div>
+                    <div class="campos-pf-exclusivos">
+                        <span class="label-mini">SEXO</span>
+                        <strong id="status-val-sexo">--</strong>
+                    </div>
+
+                    <div class="full-grid">
+                        <span class="label-mini">CIDADE / ESTADO</span>
+                        <strong id="status-val-cidade">Cidade - UF</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Texto de confirmação -->
+            <div class="status-texto-confirmacao">
+                <p id="status-pergunta">Deseja realmente desativar esse cliente?</p>
+                <span id="status-descricao">Ao desativar o cliente, ele perderá acesso temporário aos sistemas de atendimento e faturamento ativos.</span>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="status-botoes">
+                <button type="button" id="btn-executar-acao" class="btn-acao-principal desativar">Desativar</button>
+                <button type="button" id="btn-cancelar-acao" class="btn-acao-secundaria">Cancelar</button>
+            </div>
+
+        </div>
+    </div>
+
 
     <script src="../javascript/navbar.js"></script>
     <script src="../javascript/clientes.js"></script>

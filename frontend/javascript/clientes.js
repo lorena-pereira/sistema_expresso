@@ -12,7 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDetalhes = document.getElementById('modal-detalhes-cliente');
     const btnFecharDetalhes = document.getElementById('btn-fechar-detalhes');
     
+    // 3. Elementos do Modal de Status (Ativar / Desativar)
+    const modalConfirmarStatus = document.getElementById('modal-confirmar-status');
+    const btnCancelarAcao = document.getElementById('btn-cancelar-acao');
+    const btnExecutarAcao = document.getElementById('btn-executar-acao');
+    
     let todosClientes = [];
+    let clienteSelecionadoParaAcao = null;
+    let acaoDesejada = null;
 
     // --- LÓGICA DO MODAL DE CADASTRAR ---
     if (btnAbrirCadastrar && modalCadastrar) {
@@ -98,10 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const doc = (cliente.cpf || cliente.cnpj || '').toLowerCase();
             const cidade = (cliente.cidade || '').toLowerCase();
 
-            // Verifica se busca combina com Nome, CPF/CNPJ ou Cidade
             const bateBusca = nome.includes(termoBusca) || doc.includes(termoBusca) || cidade.includes(termoBusca);
-            
-            // Verifica o status selecionado
             const statusAtual = cliente.status || 'Ativo';
             const bateStatus = statusSelecionado === 'todos' || statusAtual.toLowerCase() === statusSelecionado.toLowerCase();
 
@@ -111,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderizarClientes(clientesFiltrados);
     }
 
-    // --- ESCUTADORES DE EVENTOS PARA BUSCA ---
     if (inputBusca) inputBusca.addEventListener('input', aplicarFiltros);
     if (selectStatus) selectStatus.addEventListener('change', aplicarFiltros);
 
@@ -124,6 +127,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const extraValue = cliente.tipo === 'PF' ? (cliente.sexo || 'Não informado') : (cliente.inscricaoEstadual || 'Não informado');
         const statusVal = cliente.status || 'Ativo';
         const statusClass = statusVal.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
+        
+        // Ligações para abrir o modal de status a partir dos detalhes
+        const btnAcaoDesativar = document.getElementById('btn-acao-desativar');
+        const btnAcaoAtivar = document.getElementById('btn-acao-ativar');
+
+        if (btnAcaoDesativar) {
+            btnAcaoDesativar.onclick = () => abrirModalStatus(cliente, 'Inativo');
+        }
+
+        if (btnAcaoAtivar) {
+            btnAcaoAtivar.onclick = () => abrirModalStatus(cliente, 'Ativo');
+        }
 
         document.getElementById('detalhe-avatar').textContent = nome.charAt(0).toUpperCase();
         document.getElementById('detalhe-nome').textContent = nome;
@@ -150,6 +165,124 @@ document.addEventListener('DOMContentLoaded', () => {
         btnFecharDetalhes.addEventListener('click', () => modalDetalhes.classList.remove('active'));
         modalDetalhes.addEventListener('click', (e) => {
             if (e.target === modalDetalhes) modalDetalhes.classList.remove('active');
+        });
+    }
+
+    // --- LÓGICA DO MODAL DE ATIVAR / DESATIVAR STATUS ---
+    function abrirModalStatus(cliente, acao) {
+        clienteSelecionadoParaAcao = cliente;
+        acaoDesejada = acao; 
+
+        const isAtivar = acao === 'Ativo';
+
+        const topoAviso = document.getElementById('status-topo-aviso');
+        const iconeTopo = document.getElementById('status-icone-topo');
+        const tituloTopo = document.getElementById('status-titulo-topo');
+        const tituloPrincipal = document.getElementById('status-titulo-principal');
+        const pergunta = document.getElementById('status-pergunta');
+        const descricao = document.getElementById('status-descricao');
+
+        const nomeEl = document.getElementById('status-val-nome');
+        const labelDoc = document.getElementById('status-label-doc');
+        const docEl = document.getElementById('status-val-doc');
+        const telEl = document.getElementById('status-val-telefone');
+        const cidadeEl = document.getElementById('status-val-cidade');
+        
+        const camposPf = document.querySelectorAll('.campos-pf-exclusivos');
+        const nascEl = document.getElementById('status-val-nascimento');
+        const sexoEl = document.getElementById('status-val-sexo');
+
+        nomeEl.textContent = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
+        telEl.textContent = cliente.telefone || 'Não informado';
+        cidadeEl.textContent = `${cliente.cidade || 'Cidade não informada'} - ${cliente.estado || 'UF'}`;
+
+        if (cliente.tipo === 'PJ' || cliente.cnpj) {
+            labelDoc.textContent = 'CNPJ';
+            docEl.textContent = cliente.cnpj || 'Não informado';
+            camposPf.forEach(el => el.style.display = 'none');
+        } else {
+            labelDoc.textContent = 'CPF';
+            docEl.textContent = cliente.cpf || 'Não informado';
+            nascEl.textContent = cliente.dataNascimento || 'Não informada';
+            sexoEl.textContent = cliente.Sexo || cliente.sexo || 'Não informado';
+            camposPf.forEach(el => el.style.display = 'block');
+        }
+
+        if (isAtivar) {
+            topoAviso.className = 'status-header-aviso sucesso';
+            if (iconeTopo) iconeTopo.setAttribute('data-lucide', 'shield-check');
+            tituloTopo.textContent = 'REATIVAÇÃO';
+            tituloPrincipal.textContent = 'Ativar Cliente';
+            pergunta.textContent = 'Deseja realmente ativar esse cliente?';
+            descricao.textContent = 'Ao ativar o cliente, todos os serviços e históricos de faturamento vinculados serão reestabelecidos imediatamente.';
+            
+            btnExecutarAcao.textContent = 'Ativar';
+            btnExecutarAcao.className = 'btn-acao-principal ativar';
+        } else {
+            topoAviso.className = 'status-header-aviso perigo';
+            if (iconeTopo) iconeTopo.setAttribute('data-lucide', 'alert-triangle');
+            tituloTopo.textContent = 'AÇÃO DESTRUTIVA';
+            tituloPrincipal.textContent = 'Desativar Cliente';
+            pergunta.textContent = 'Deseja realmente desativar esse cliente?';
+            descricao.textContent = 'Ao desativar o cliente, ele perderá acesso temporário aos sistemas de atendimento e faturamento ativos.';
+            
+            btnExecutarAcao.textContent = 'Desativar';
+            btnExecutarAcao.className = 'btn-acao-principal desativar';
+        }
+
+        if (window.lucide) lucide.createIcons();
+        if (modalConfirmarStatus) modalConfirmarStatus.classList.add('active');
+    }
+
+    if (btnCancelarAcao && modalConfirmarStatus) {
+        btnCancelarAcao.addEventListener('click', () => {
+            modalConfirmarStatus.classList.remove('active');
+        });
+        modalConfirmarStatus.addEventListener('click', (e) => {
+            if (e.target === modalConfirmarStatus) {
+                modalConfirmarStatus.classList.remove('active');
+            }
+        });
+    }
+
+    if (btnExecutarAcao) {
+        btnExecutarAcao.addEventListener('click', async () => {
+            if (!clienteSelecionadoParaAcao) return;
+
+            try {
+                // Envia a atualização para o servidor Node.js
+                const response = await fetch('http://localhost:3000/atualizar-status', {
+                    method: 'POST', // ou 'PUT', dependendo de como configurou o seu back-end
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: clienteSelecionadoParaAcao.id, // Identificador do cliente
+                        status: acaoDesejada // 'Ativo' ou 'Inativo'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Atualiza o status localmente após a confirmação do servidor
+                    clienteSelecionadoParaAcao.status = acaoDesejada;
+                    
+                    alert(`Cliente ${acaoDesejada === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`);
+                    modalConfirmarStatus.classList.remove('active');
+                    
+                    const modalDetalhes = document.getElementById('modal-detalhes-cliente');
+                    if (modalDetalhes) modalDetalhes.classList.remove('active');
+
+                    renderizarClientes(todosClientes);
+                } else {
+                    alert('Erro ao atualizar status no servidor: ' + (result.message || 'Erro desconhecido'));
+                }
+
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                alert('Não foi possível conectar ao servidor para alterar o status.');
+            }
         });
     }
 

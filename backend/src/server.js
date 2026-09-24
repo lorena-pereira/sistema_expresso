@@ -83,6 +83,53 @@ app.post('/cadastrar-cliente', (req, res) => {
     }
 });
 
+// caminho /atualizar-status
+app.post('/atualizar-status', (req, res) => {
+    const { id, status } = req.body;
+
+    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
+
+    try {
+        if (!fs.existsSync(clientesFilePath)) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Arquivo de clientes não encontrado." 
+            });
+        }
+
+        const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
+        let clientes = JSON.parse(rawData);
+
+        // Procura o cliente pelo ID
+        const clienteIndex = clientes.findIndex(c => c.id === id);
+
+        if (clienteIndex === -1) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Cliente não encontrado." 
+            });
+        }
+
+        // Atualiza o status do cliente encontrado
+        clientes[clienteIndex].status = status;
+
+        // Salva a lista modificada de volta no arquivo JSON
+        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Status atualizado com sucesso!" 
+        });
+
+    } catch (error) {
+        console.error("Erro interno ao atualizar status:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Erro no servidor ao atualizar o status." 
+        });
+    }
+});
+
 app.listen(3000, () => 
     console.log('Servidor iniciado na porta 3000')
 );
