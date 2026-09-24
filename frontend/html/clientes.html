@@ -9,40 +9,14 @@
     <script src="../javascript/auth.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/index.css">
     <link rel="stylesheet" href="../css/clientes.css">
 </head>
 <body>
 
     <!-- Cabeçalho / Navbar -->
-    <header class="navbar">
-        <div class="navbar-left">
-            <div class="brand-icon">
-                <i data-lucide="train-front"></i>
-            </div>
-            <span class="brand-title">SISTEMA EXPRESSO</span>
-        </div>
-
-        <div class="navbar-search">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" placeholder="Buscar no sistema...">
-        </div>
-
-        <div class="navbar-user" id="user-dropdown-toggle">
-            <div class="user-info">
-                <span class="user-name">Usuário</span>
-                <span class="user-role">Administrador</span>
-            </div>
-            <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
-
-            <!-- Menu Suspenso -->
-            <div class="user-dropdown" id="user-dropdown">
-                <button id="btn-logout" class="dropdown-item">
-                    <i data-lucide="log-out"></i> Sair do Sistema
-                </button>
-            </div>
-        </div>
-    </header>
+    <div id="navbar-container"></div>
 
     <!-- Conteúdo Principal -->
     <main class="main-container">
@@ -206,9 +180,8 @@
     </div>
 
 
-    <script src="../javascript/index.js"></script>
+    <script src="../javascript/navbar.js"></script>
     <script src="../javascript/clientes.js"></script>
-    <script src="../javascript/sessao.js"></script>
     <script>
         lucide.createIcons();
     </script>

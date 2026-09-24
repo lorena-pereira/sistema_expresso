@@ -8,12 +8,17 @@
     <!-- Ícones do Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <link rel="stylesheet" href="../css/navbar.css">
+
     <script src="../javascript/auth.js"></script>
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
 
+    <div id="navbar-container"></div>
+
     <!-- Cabeçalho / Navbar -->
+    <!--
     <header class="navbar">
         <div class="navbar-left">
             <div class="brand-icon">
@@ -34,7 +39,7 @@
             </div>
             <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
             
-            <!-- Menu Suspenso (Dropdown) -->
+            /* Menu Suspenso (Dropdown) */
             <div class="user-dropdown" id="user-dropdown">
                 <button id="btn-logout" class="dropdown-item">
                     <i data-lucide="log-out"></i> Sair do Sistema
@@ -43,6 +48,8 @@
         </div>
 
     </header>
+
+    -->
 
     <!-- Conteúdo Principal -->
     <main class="main-container">
@@ -136,7 +143,7 @@
     </script>
 
     <!-- Inicialização do JS da tela inicial -->
+    <script src="../javascript/navbar.js"></script>
     <script src="../javascript/index.js"></script>
-    <script src="../javascript/sessao.js"></script>
 </body>
 </html>

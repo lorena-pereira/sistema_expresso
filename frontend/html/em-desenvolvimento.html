@@ -6,7 +6,9 @@
     <title>Sistema Expresso - Em Desenvolvimento</title>
     <!-- Ícones do Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- CSS Base / Navbar -->
+    
+    <!-- CSS Navbar -->
+    <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/index.css">
     <!-- CSS Exclusivo da página -->
     <link rel="stylesheet" href="../css/em-desenvolvimento.css">
@@ -14,27 +16,7 @@
 <body>
 
     <!-- Cabeçalho / Navbar -->
-    <header class="navbar">
-        <div class="navbar-left">
-            <div class="brand-icon">
-                <i data-lucide="train-front"></i>
-            </div>
-            <span class="brand-title">SISTEMA EXPRESSO</span>
-        </div>
-
-        <div class="navbar-search">
-            <i data-lucide="search" class="search-icon"></i>
-            <input type="text" placeholder="Buscar no sistema...">
-        </div>
-
-        <div class="navbar-user">
-            <div class="user-info">
-                <span class="user-name">Usuário</span>
-                <span class="user-role">Administrador</span>
-            </div>
-            <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
-        </div>
-    </header>
+    <div id="navbar-container"></div>
 
     <!-- Conteúdo Principal -->
     <main class="main-container flex-center">
@@ -55,5 +37,7 @@
     <script>
         lucide.createIcons();
     </script>
+
+    <script src="../javascript/navbar.js"></script>
 </body>
 </html>

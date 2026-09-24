@@ -7,39 +7,14 @@
     <title>Sistema Expresso</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../javascript/auth.js"></script>
+
+    <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/cadastro-cliente.css">
 </head>
 
 <body>
     <!-- cabeçalho -->
-    <header class="navbar">
-        <div class="navbar-left">
-            <div class="brand-icon">
-                <i data-lucide="train-front"></i>
-            </div>
-            <span class="brand-title">SISTEMA EXPRESSO</span>
-        </div>
-
-        <nav class="navbar-center">
-            <a href="index.html">Início</a>
-            <a href="#" class="active">Clientes</a>
-        </nav>
-
-        <div class="navbar-user" id="user-dropdown-toggle">
-            <div class="user-info">
-                <span class="user-name">Usuário</span>
-                <span class="user-role">Perfil</span>
-            </div>
-            <img src="../assets/index/user.png" alt="Foto do usuário" class="user-avatar">
-        </div>
-
-        <div class="user-dropdown" id="user-dropdown">
-            <button id="btn-logout" class="dropdown-item">
-                <i data-lucide="log-out"></i> Sair do Sistema
-            </button>
-        </div>
-        </div>
-    </header>
+    <div id="navbar-container"></div>
 
     <!-- conteúdo principal -->
     <main class="main-container">
@@ -163,7 +138,7 @@
     </main>
 
     <script src="../javascript/sessao.js"></script>
-    <script src="../javascript/index.js"></script>
+    <script src="../javascript/navbar.js"></script>
     <script src="../javascript/cadastro-cliente.js"></script>
     <script>lucide.createIcons();</script>
 </body>
