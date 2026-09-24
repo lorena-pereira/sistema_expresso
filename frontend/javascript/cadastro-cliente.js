@@ -1,4 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Função para exibir o Toast Notification
+    function mostrarToast(mensagem, tipo = 'sucesso') {
+        const toastAntigo = document.querySelector('.toast-notification');
+        if (toastAntigo) toastAntigo.remove();
+
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${tipo}`;
+        
+        // Ícone e texto
+        toast.innerHTML = `
+            <i data-lucide="${tipo === 'sucesso' ? 'check-circle' : 'alert-circle'}" style="width: 20px; height: 20px;"></i>
+            <span>${mensagem}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        if (window.lucide) lucide.createIcons();
+
+        // Faz o toast aparecer deslizando
+        setTimeout(() => {
+            toast.style.right = '20px';
+        }, 100);
+
+        // Remove o toast após 3 segundos
+        setTimeout(() => {
+            toast.style.right = '-400px';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
     // lógica para alternar entre Pessoa Física e Jurídica
     const form = document.getElementById('formCadastroCliente');
     const clienteId = new URLSearchParams(window.location.search).get('id');
@@ -38,14 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    alert(emEdicao ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!');
-                    window.location.assign('./clientes.html');
+                    const mensagemSucesso = emEdicao ? 'Cliente atualizado com sucesso!' : 'Cliente cadastrado com sucesso!';
+                    mostrarToast(mensagemSucesso, 'sucesso');
+                    
+                    // Aguarda 1.5 segundos para o utilizador ver o toast antes de redirecionar
+                    setTimeout(() => {
+                        window.location.assign('./clientes.html');
+                    }, 1500);
                 } else {
-                    alert((emEdicao ? 'Erro ao atualizar: ' : 'Erro ao cadastrar: ') + result.message);
+                    const mensagemErro = (emEdicao ? 'Erro ao atualizar: ' : 'Erro ao cadastrar: ') + result.message;
+                    mostrarToast(mensagemErro, 'erro');
                 }
             } catch (error) {
                 console.error('Erro na requisição:', error);
-                alert('Erro de conexão com o servidor.');
+                mostrarToast('Erro de conexão com o servidor.', 'erro');
             }
         });
     }
@@ -61,8 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const cliente = clientes.find(item => String(item.id) === clienteId);
 
             if (!cliente) {
-                alert('Cliente não encontrado.');
-                window.location.href = './clientes.html';
+                mostrarToast('Cliente não encontrado.', 'erro');
+                setTimeout(() => {
+                    window.location.href = './clientes.html';
+                }, 1500);
                 return;
             }
 
@@ -72,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             console.error('Erro ao carregar cliente:', error);
-            alert('Não foi possível carregar os dados do cliente.');
+            mostrarToast('Não foi possível carregar os dados do cliente.', 'erro');
         }
     }
 
@@ -124,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputCnpj.addEventListener('input', (e) => e.target.value = mascaraCNPJ(e.target.value));
     }
 
-    // como o Telefone aparece nas duas páginas (PF e PJ), aplicamos a todos os que encontrar
     const inputsTelefone = document.querySelectorAll('input[name="telefone"]');
     inputsTelefone.forEach(input => {
         input.addEventListener('input', (e) => e.target.value = mascaraTelefone(e.target.value));
@@ -134,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inputCep) {
         inputCep.addEventListener('input', (e) => e.target.value = mascaraCEP(e.target.value));
     }
-
 
     const inputCepAuto = document.querySelector('input[name="cep"]');
     const inputRua = document.querySelector('input[name="rua"]');
@@ -155,11 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (inputRua) inputRua.value = dados.logradouro;
                         if (inputBairro) inputBairro.value = dados.bairro;
                         if (inputCidade) inputCidade.value = dados.localidade;
-                        
-                        // seleciona o estado diretamente através da sigla devolvida pela API
                         if (selectEstado) selectEstado.value = dados.uf; 
                     } else {
-                        alert('O CEP inserido não foi encontrado.');
+                        mostrarToast('O CEP inserido não foi encontrado.', 'erro');
                     }
                 } catch (erro) {
                     console.error('Erro ao consultar o ViaCEP:', erro);

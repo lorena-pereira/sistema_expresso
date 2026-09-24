@@ -1,4 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- FUNÇÃO DE TOAST NOTIFICATION ---
+    function mostrarToast(mensagem, tipo = 'sucesso') {
+        const toastAntigo = document.querySelector('.toast-notification');
+        if (toastAntigo) toastAntigo.remove();
+
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${tipo}`;
+        
+        toast.innerHTML = `
+            <i data-lucide="${tipo === 'sucesso' ? 'check-circle' : 'alert-circle'}" style="width: 20px; height: 20px;"></i>
+            <span>${mensagem}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        if (window.lucide) lucide.createIcons();
+
+        setTimeout(() => {
+            toast.style.right = '20px';
+        }, 100);
+
+        setTimeout(() => {
+            toast.style.right = '-400px';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
     const listaContainer = document.getElementById('lista-clientes-body');
     const inputBusca = document.getElementById('input-busca-cliente');
     const selectStatus = document.getElementById('select-filtro-status');
@@ -47,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('../../backend/data/clientes.json');
             if (!response.ok) throw new Error('Erro ao buscar dados');
             todosClientes = await response.json();
-            renderizarClientes(todosClientes);
+            
+            aplicarFiltros(); 
         } catch (error) {
             console.error(error);
         }
@@ -63,10 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         clientes.forEach(cliente => {
-            const nomeExibicao = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
-            const documentoExibicao = cliente.cpf || cliente.cnpj || 'Não informado';
+            const nomeExibicao = String(cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome');
+            const documentoExibicao = String(cliente.cpf || cliente.cnpj || 'Não informado');
             const inicial = nomeExibicao.charAt(0).toUpperCase();
-            const statusTexto = cliente.status || 'Ativo';
+            const statusTexto = String(cliente.status || 'Ativo');
             const statusClass = statusTexto.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
 
             const row = document.createElement('div');
@@ -99,16 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNÇÃO DE BUSCA E FILTRO ---
     function aplicarFiltros() {
         const termoBusca = inputBusca ? inputBusca.value.toLowerCase().trim() : '';
-        const statusSelecionado = selectStatus ? selectStatus.value : 'todos';
+        const statusSelecionado = selectStatus ? selectStatus.value.toLowerCase() : 'todos';
 
         const clientesFiltrados = todosClientes.filter(cliente => {
-            const nome = (cliente.nomeCompleto || cliente.razaoSocial || '').toLowerCase();
-            const doc = (cliente.cpf || cliente.cnpj || '').toLowerCase();
-            const cidade = (cliente.cidade || '').toLowerCase();
+            const nome = String(cliente.nomeCompleto || cliente.razaoSocial || '').toLowerCase();
+            const doc = String(cliente.cpf || cliente.cnpj || '').toLowerCase();
+            const cidade = String(cliente.cidade || '').toLowerCase();
 
             const bateBusca = nome.includes(termoBusca) || doc.includes(termoBusca) || cidade.includes(termoBusca);
-            const statusAtual = cliente.status || 'Ativo';
-            const bateStatus = statusSelecionado === 'todos' || statusAtual.toLowerCase() === statusSelecionado.toLowerCase();
+            
+            const statusAtual = String(cliente.status || 'Ativo').toLowerCase();
+            const bateStatus = statusSelecionado === 'todos' || statusAtual === statusSelecionado;
 
             return bateBusca && bateStatus;
         });
@@ -129,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusVal = cliente.status || 'Ativo';
         const statusClass = statusVal.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
         
-        // Ligações para abrir o modal de status a partir dos detalhes
         const btnAcaoDesativar = document.getElementById('btn-acao-desativar');
         const btnAcaoAtivar = document.getElementById('btn-acao-ativar');
 
@@ -256,38 +283,40 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!clienteSelecionadoParaAcao) return;
 
             try {
-                // Envia a atualização para o servidor Node.js
                 const response = await fetch('http://localhost:3000/atualizar-status', {
-                    method: 'POST', // ou 'PUT', dependendo de como configurou o seu back-end
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        id: clienteSelecionadoParaAcao.id, // Identificador do cliente
-                        status: acaoDesejada // 'Ativo' ou 'Inativo'
+                        id: clienteSelecionadoParaAcao.id,
+                        status: acaoDesejada 
                     })
                 });
 
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    // Atualiza o status localmente após a confirmação do servidor
                     clienteSelecionadoParaAcao.status = acaoDesejada;
                     
-                    alert(`Cliente ${acaoDesejada === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`);
+                    // Alerta substituído pelo toast de sucesso
+                    mostrarToast(`Cliente ${acaoDesejada === 'Ativo' ? 'ativado' : 'desativado'} com sucesso!`, 'sucesso');
+                    
                     modalConfirmarStatus.classList.remove('active');
                     
                     const modalDetalhes = document.getElementById('modal-detalhes-cliente');
                     if (modalDetalhes) modalDetalhes.classList.remove('active');
 
-                    renderizarClientes(todosClientes);
+                    aplicarFiltros(); 
                 } else {
-                    alert('Erro ao atualizar status no servidor: ' + (result.message || 'Erro desconhecido'));
+                    // Alerta substituído pelo toast de erro
+                    mostrarToast('Erro ao atualizar status no servidor: ' + (result.message || 'Erro desconhecido'), 'erro');
                 }
 
             } catch (error) {
                 console.error('Erro na requisição:', error);
-                alert('Não foi possível conectar ao servidor para alterar o status.');
+                // Alerta substituído pelo toast de erro
+                mostrarToast('Não foi possível conectar ao servidor para alterar o status.', 'erro');
             }
         });
     }

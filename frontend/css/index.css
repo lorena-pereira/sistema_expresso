@@ -124,6 +124,41 @@ body {
     transform: translateX(4px);
 }
 
+/* --- Notificação Toast --- */
+.toast-notification {
+    position: fixed;
+    top: 90px;
+    right: -400px; /* Fica escondido fora do ecrã inicialmente */
+    color: #FFFFFF;
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 9999;
+    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+}
+
+/* Variações de cor para Sucesso e Erro */
+.toast-notification.sucesso {
+    background-color: #16A34A; /* Verde */
+}
+
+.toast-notification.erro {
+    background-color: #DC2626; /* Vermelho */
+}
+
+.toast-notification svg {
+    width: 24px;
+    height: 24px;
+}
+
+.toast-notification span {
+    font-size: 15px;
+    font-weight: 600;
+}
+
 /* Responsividade */
 @media (max-width: 1024px) {
     .cards-grid {
