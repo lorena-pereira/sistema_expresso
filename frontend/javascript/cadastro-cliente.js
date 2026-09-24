@@ -30,8 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('Cliente cadastrado com sucesso!');
-                    window.location.href = 'clientes.html';
+                    //busca os elementos do modal de sucesso
+                    const toast = document.getElementById('toast-sucess');
+
+                    if(toast){
+                        if(window.lucide) lucide.createIcons();
+
+                        // notificação para dentro do ecrã
+                        toast.classList.add('show');
+
+                        // aguarda 2 segundos e redireciona para a tela de clientes
+                        setTimeout(() => {
+                            window.location.href = 'clientes.html';
+                        }, 2000);
+
+                    // caso o toast (notificação) não funcione, é emitido o alert e feito o redirecionamento
+                    } else {
+
+                        alert('Cliente cadastrado com sucesso!');
+                        window.location.href = 'clientes.html';
+                    }
                 } else {
                     alert('Erro ao cadastrar: ' + result.message);
                 }
