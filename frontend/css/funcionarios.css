@@ -1,4 +1,4 @@
-/* Cabeçalho da Página */
+/* cabeçalho da página */
 .page-header {
     display: flex;
     align-items: center; 
@@ -25,7 +25,7 @@
     text-decoration: none;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: background-color 0.2s;
-    flex-shrink: 0; 
+    flex-shrink: 0;
 }
 
 .btn-back-circle:hover {
@@ -64,7 +64,7 @@
     gap: 8px;
     transition: background-color 0.2s ease;
     text-decoration: none;
-    flex-shrink: 0; 
+    flex-shrink: 0;
 }
 
 .btn-primary:hover {
@@ -76,7 +76,7 @@
     height: 18px;
 }
 
-/* Barra de Filtros e Busca */
+/* barra de filtros e busca */
 .filter-bar {
     display: flex;
     align-items: center;
@@ -89,7 +89,7 @@
 .search-input-wrapper {
     position: relative;
     flex: 1; 
-    min-width: 0; 
+    min-width: 0;
 }
 
 .search-input-wrapper svg {
@@ -148,7 +148,7 @@
     -webkit-appearance: none;
 }
 
-/* tabela de clientes */
+/* tabela de funcionários */
 .table-container {
     background-color: #FFFFFF;
     border-radius: 12px;
@@ -215,7 +215,7 @@
     color: #475569;
 }
 
-/* Status Badges */
+/* status badges */
 .badge-status {
     display: inline-flex;
     align-items: center;
@@ -262,7 +262,7 @@
     cursor: pointer;
 }
 
-/* Modais (Geral) */
+/* modais - geral */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -338,74 +338,6 @@
     font-size: 14px; 
     color: #64748B; 
     margin-bottom: 24px; 
-}
-
-/* Modal Tipos de Pessoa */
-.modal-options { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-}
-
-.option-card {
-    display: flex; 
-    align-items: center; 
-    gap: 16px; 
-    padding: 16px;
-    border: 1px solid #E2E8F0; 
-    border-radius: 12px; 
-    text-decoration: none;
-    transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
-}
-
-.option-card:hover { 
-    border-color: #2563EB; 
-    background-color: #F8FAFC; 
-    transform: translateX(4px); 
-}
-
-.option-icon {
-    width: 44px; 
-    height: 44px; 
-    border-radius: 10px; 
-    background-color: #EFF6FF;
-    color: #2563EB; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    flex-shrink: 0;
-}
-
-.option-icon svg { 
-    width: 22px; 
-    height: 22px; 
-}
-
-.option-info { 
-    flex-grow: 1; 
-}
-
-.option-info h3 { 
-    font-size: 15px; 
-    font-weight: 700; 
-    color: #0F172A; 
-    margin-bottom: 2px; 
-}
-
-.option-info p { 
-    font-size: 12px; 
-    color: #64748B; 
-    margin-bottom: 0; 
-}
-
-.arrow-icon { 
-    width: 18px; 
-    height: 18px; 
-    color: #94A3B8; 
-}
-
-.option-card:hover .arrow-icon { 
-    color: #2563EB; 
 }
 
 /* modal detalhes */
@@ -567,11 +499,7 @@
     transition: background 0.2s;
 }
 
-.btn-acao-secundaria:hover { 
-    background: #F1F5F9; 
-}
-
-/* seção de ações */
+/* seção de ações dos botões*/
 .actions-grid { 
     display: grid; 
     grid-template-columns: 1fr 1fr 1fr; 
@@ -681,26 +609,24 @@
 /* Responsividade */
 @media (max-width: 600px) {
     .page-header {
-        align-items: flex-start; 
+        align-items: flex-start;
         gap: 8px;
     }
     .header-title-group {
         gap: 12px;
     }
-    .header-title-group h1 { 
-        font-size: 20px; 
-    }
+    .header-title-group h1 { font-size: 20px; }
     
     .filter-bar {
         gap: 8px;
     }
     
     .filter-select-wrapper {
-        width: 150px; 
+        width: 150px;
     }
 
     .search-input-wrapper input {
-        padding: 0 12px 0 36px;
+        padding: 0 12px 0 36px; 
         font-size: 13px;
     }
 

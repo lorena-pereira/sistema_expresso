@@ -167,6 +167,48 @@ app.post('/atualizar-status', (req, res) => {
     }
 });
 
+// caminho /atualizar-status-funcionario
+app.post('/atualizar-status-funcionario', (req, res) => {
+    const { id, status } = req.body;
+    const funcionariosFilePath = new URL('../data/funcionarios.json', import.meta.url);
+
+    try {
+        if (!fs.existsSync(funcionariosFilePath)) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Arquivo de funcionários não encontrado." 
+            });
+        }
+
+        const rawData = fs.readFileSync(funcionariosFilePath, 'utf-8');
+        let funcionarios = JSON.parse(rawData);
+
+        const funcionarioIndex = funcionarios.findIndex(f => f.id === id);
+
+        if (funcionarioIndex === -1) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Funcionário não encontrado." 
+            });
+        }
+
+        funcionarios[funcionarioIndex].status = status;
+        fs.writeFileSync(funcionariosFilePath, JSON.stringify(funcionarios, null, 2));
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Status atualizado com sucesso!" 
+        });
+
+    } catch (error) {
+        console.error("Erro interno ao atualizar status do funcionário:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Erro no servidor ao atualizar o status." 
+        });
+    }
+});
+
 app.listen(3000, () => 
     console.log('Servidor iniciado na porta 3000')
 );

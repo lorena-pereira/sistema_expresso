@@ -5,43 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Expresso</title>
     
-    <!-- Script de Proteção e Ícones -->
     <script src="../javascript/auth.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/clientes.css">
+    <link rel="stylesheet" href="../css/funcionarios.css">
 </head>
 <body>
 
-    <!-- Cabeçalho / Navbar -->
     <div id="navbar-container"></div>
 
-    <!-- Conteúdo Principal -->
     <main class="main-container">
         
-        <!-- Cabeçalho da Página com Botão Voltar e Cadastrar -->
         <div class="page-header">
             <div class="header-title-group">
                 <a href="index.html" class="btn-back-circle" title="Voltar ao início">
                     <i data-lucide="arrow-left"></i>
                 </a>
                 <div>
-                    <h1>Clientes</h1>
-                    <p>Visualize e gerencie as contas de clientes cadastrados</p>
+                    <h1>Funcionários</h1>
+                    <p>Visualize e gerencie as contas de funcionários cadastrados</p>
                 </div>
             </div>
-            <button type="button" class="btn-primary" id="btn-abrir-modal">
+            <a href="cadastro-funcionario.html" class="btn-primary" id="btn-cadastrar">
                 <i data-lucide="plus"></i> Cadastrar
-            </button>
+            </a>
         </div>
 
-        <!-- Barra de Filtros e Pesquisa -->
         <div class="filter-bar">
             <div class="search-input-wrapper">
                 <i data-lucide="search"></i>
-                <input type="text" id="input-busca-cliente" placeholder="Buscar cliente por nome ou CPF/CNPJ">
+                <input type="text" id="input-busca-funcionario" placeholder="Buscar funcionário por nome ou CPF">
             </div>
             <div class="filter-select-wrapper">
                 <i data-lucide="filter"></i>
@@ -53,118 +48,78 @@
             </div>
         </div>
 
-        <!-- Tabela / Lista de Clientes -->
         <div class="table-container">
             <div class="table-header">
                 <div class="col-nome">NOME</div>
-                <div class="col-cpf">CPF/CNPJ</div>
+                <div class="col-cpf">CPF</div>
                 <div class="col-status">STATUS</div>
                 <div class="col-acoes">AÇÕES</div>
             </div>
 
-            <div id="lista-clientes-body">
-                <!-- Os clientes serão inseridos dinamicamente pelo JavaScript -->
+            <div id="lista-funcionarios-body">
+                <!-- Os funcionários serão inseridos dinamicamente pelo JavaScript -->
             </div>
         </div>
 
     </main>
 
-    <!-- MODAL DE SELEÇÃO DE TIPO DE PESSOA -->
-    <div class="modal-overlay" id="modal-tipo-pessoa">
-        <div class="modal-card">
-            <button class="modal-close" id="btn-fechar-modal">
-                <i data-lucide="x"></i>
-            </button>
-
-            <h2>Novo Cadastro</h2>
-            <p>Selecione o tipo de pessoa que deseja cadastrar no sistema:</p>
-
-            <div class="modal-options">
-                <a href="cadastro-cliente-pf.html" class="option-card">
-                    <div class="option-icon">
-                        <i data-lucide="user"></i>
-                    </div>
-                    <div class="option-info">
-                        <h3>Pessoa Física</h3>
-                        <p>Cadastro com CPF, dados pessoais e endereço</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="arrow-icon"></i>
-                </a>
-
-                <a href="cadastro-cliente-pj.html" class="option-card">
-                    <div class="option-icon">
-                        <i data-lucide="building-2"></i>
-                    </div>
-                    <div class="option-info">
-                        <h3>Pessoa Jurídica</h3>
-                        <p>Cadastro com CNPJ, Razão Social e dados da empresa</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="arrow-icon"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
-        <!-- MODAL DETALHES DO CLIENTE -->
-    <div class="modal-overlay" id="modal-detalhes-cliente">
+    <!-- MODAL DETALHES DO FUNCIONÁRIO -->
+    <div class="modal-overlay" id="modal-detalhes-funcionario">
         <div class="modal-card modal-detalhes">
             <button class="modal-close" id="btn-fechar-detalhes">
                 <i data-lucide="x"></i>
             </button>
 
             <div class="modal-header-detalhes">
-                <h2>Detalhes do cliente</h2>
+                <h2>Detalhes do funcionário</h2>
                 <p>Visualize os dados principais e altere rapidamente o status da conta.</p>
             </div>
 
-            <!-- Perfil Principal do Cliente -->
             <div class="cliente-profile-header">
-                <div class="avatar-circle-lg" id="detalhe-avatar">A</div>
+                <div class="avatar-circle-lg" id="detalhe-avatar">F</div>
                 <div class="profile-info">
                     <div class="profile-title-group">
-                        <h3 id="detalhe-nome">Ana Clara Costa</h3>
+                        <h3 id="detalhe-nome">Nome do Funcionário</h3>
                         <span class="badge-status ativo" id="detalhe-badge-status">
                             <span class="badge-dot"></span> <span id="detalhe-badge-texto">Ativo</span>
                         </span>
                     </div>
-                    <p id="detalhe-subtitulo">Cliente selecionado da listagem principal.</p>
+                    <p id="detalhe-subtitulo">Cargo / Setor</p>
                 </div>
             </div>
 
-            <!-- Seção Informações -->
             <div class="info-section">
                 <span class="section-label">INFORMAÇÕES</span>
                 <div class="info-grid">
                     <div class="info-box">
-                        <span class="info-label" id="detalhe-doc-label">CPF</span>
-                        <strong class="info-value" id="detalhe-doc-val">000.111.222-33</strong>
+                        <span class="info-label">CPF</span>
+                        <strong class="info-value" id="detalhe-cpf-val">000.000.000-00</strong>
                     </div>
                     <div class="info-box">
                         <span class="info-label">STATUS</span>
                         <strong class="info-value" id="detalhe-status-val">Ativo</strong>
                     </div>
                     <div class="info-box">
-                        <span class="info-label" id="detalhe-extra-label">SEXO</span>
-                        <strong class="info-value" id="detalhe-sexo-val">Feminino</strong>
+                        <span class="info-label">SEXO</span>
+                        <strong class="info-value" id="detalhe-sexo-val">Não informado</strong>
                     </div>
                     <div class="info-box">
                         <span class="info-label">TELEFONE</span>
-                        <strong class="info-value" id="detalhe-telefone-val">(11) 99876-4321</strong>
+                        <strong class="info-value" id="detalhe-telefone-val">(00) 00000-0000</strong>
                     </div>
                 </div>
                 <div class="info-box info-box-full">
                     <span class="info-label">ENDEREÇO</span>
-                    <strong class="info-value" id="detalhe-obs-val">Rua Caminho Três, 49 - Zabelê, Vitória da Conquista - BA</strong>
+                    <strong class="info-value" id="detalhe-obs-val">Sem endereço cadastrado</strong>
                 </div>
             </div>
 
-            <!-- Seção Ações -->
             <div class="action-section">
                 <span class="section-label">AÇÕES</span>
                 <div class="actions-grid">
                     <a href="#" id="btn-acao-editar" class="action-card btn-editar">
                         <strong>Editar</strong>
-                        <span>Atualizar dados do cliente</span>
+                        <span>Atualizar dados do funcionário</span>
                     </a>
                     <button type="button" id="btn-acao-desativar" class="action-card btn-desativar">
                         <strong>Desativar</strong>
@@ -179,45 +134,40 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIRMAÇÃO DE STATUS (ATIVAR / DESATIVAR) -->
+    <!-- MODAL DE CONFIRMAÇÃO DE STATUS -->
     <div class="modal-overlay" id="modal-confirmar-status">
         <div class="modal-card-status">
             
-            <!-- Cabeçalho Dinâmico (Altera cor e texto via JS) -->
             <div class="status-header-aviso" id="status-topo-aviso">
                 <i data-lucide="alert-triangle" id="status-icone-topo"></i>
                 <span id="status-titulo-topo">AÇÃO DESTRUTIVA</span>
             </div>
             
-            <h2 id="status-titulo-principal">Desativar Cliente</h2>
+            <h2 id="status-titulo-principal">Desativar Funcionário</h2>
 
-            <!-- Cartão interno com os dados do cliente (sem foto) -->
             <div class="status-cliente-card">
                 <div class="info-bloco-topo">
-                    <span class="label-mini" id="status-label-nome">NOME DO CLIENTE</span>
-                    <strong id="status-val-nome">Nome do Cliente</strong>
+                    <span class="label-mini">NOME DO FUNCIONÁRIO</span>
+                    <strong id="status-val-nome">Nome do Funcionário</strong>
                 </div>
 
                 <div class="status-grid-dados">
                     <div>
-                        <span class="label-mini" id="status-label-doc">CPF</span>
+                        <span class="label-mini">CPF</span>
                         <strong id="status-val-doc">000.000.000-00</strong>
                     </div>
                     <div>
                         <span class="label-mini">TELEFONE</span>
                         <strong id="status-val-telefone">(00) 00000-0000</strong>
                     </div>
-
-                    <!-- Campos específicos de PF (Ocultados dinamicamente se for PJ) -->
-                    <div class="campos-pf-exclusivos">
+                    <div>
                         <span class="label-mini">NASCIMENTO</span>
                         <strong id="status-val-nascimento">--/--/----</strong>
                     </div>
-                    <div class="campos-pf-exclusivos">
+                    <div>
                         <span class="label-mini">SEXO</span>
                         <strong id="status-val-sexo">--</strong>
                     </div>
-
                     <div class="full-grid">
                         <span class="label-mini">CIDADE / ESTADO</span>
                         <strong id="status-val-cidade">Cidade - UF</strong>
@@ -225,24 +175,20 @@
                 </div>
             </div>
 
-            <!-- Texto de confirmação -->
             <div class="status-texto-confirmacao">
-                <p id="status-pergunta">Deseja realmente desativar esse cliente?</p>
-                <span id="status-descricao">Ao desativar o cliente, ele perderá acesso temporário aos sistemas de atendimento e faturamento ativos.</span>
+                <p id="status-pergunta">Deseja realmente desativar esse funcionário?</p>
+                <span id="status-descricao">Ao desativar, ele perderá o acesso aos sistemas internos.</span>
             </div>
 
-            <!-- Botões de Ação -->
             <div class="status-botoes">
                 <button type="button" id="btn-executar-acao" class="btn-acao-principal desativar">Desativar</button>
                 <button type="button" id="btn-cancelar-acao" class="btn-acao-secundaria">Cancelar</button>
             </div>
-
         </div>
     </div>
 
-
     <script src="../javascript/navbar.js"></script>
-    <script src="../javascript/clientes.js"></script>
+    <script src="../javascript/funcionarios.js"></script>
     <script>
         lucide.createIcons();
     </script>
