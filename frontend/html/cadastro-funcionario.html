@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Expresso</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="../javascript/auth.js"></script>
+    <script src="/javascript/auth.js"></script>
 
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/cadastro-cliente.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/cadastro-cliente.css">
 </head>
 
 <body>
@@ -51,17 +51,22 @@
 
                 <div class="input-group">
                     <label>Salário <span class="req">*</span></label>
-                    <input type="text" name="salario" placeholder="R$ 0,00" required>
+                    <input type="number" name="salario" placeholder="R$ 0,00" required>
                 </div>
 
                 <div class="input-group">
                     <label>Comissão <span class="req">*</span></label>
-                    <input type="text" name="comissao" placeholder="0,00%" required>
+                    <input type="number" name="comissao" placeholder="0,00%" required>
                 </div>
 
                 <div class="input-group">
                     <label>Data de Admissão <span class="req">*</span></label>
-                    <input type="text" name="dataAdmissao" placeholder="DD/MM/AAAA" required>
+                    <input type="date" name="dataAdmissao" placeholder="DD/MM/AAAA" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Data de Nascimento <span class="req">*</span></label>
+                    <input type="date" name="dataNascimento" placeholder="DD/MM/AAAA" required>
                 </div>
 
                 <div class="input-group">
@@ -72,6 +77,18 @@
                         <option value="gerente">Gerente</option>
                         <option value="operadorcaixa">Operador(a) de caixa</option>
                     </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Sexo <span class="req">*</span></label>
+                        <select name="sexo" required>
+                            <option value="">Selecione</option>
+                            <option value="F">Feminino</option>
+                            <option value="M">Masculino</option>
+                            <option value="NB">Não Binário</option>
+                            <option value="I">Intersexo</option>
+                            <option value="NE">Não especificado</option>
+                        </select>
                 </div>
             </div>
 
@@ -155,8 +172,8 @@
     <span>Funcionário cadastrado com sucesso!</span>
 </div>
 
-<script src="../javascript/navbar.js"></script>
-<script src="../javascript/cadastro-funcionario.js"></script>
+<script src="/javascript/navbar.js"></script>
+<script src="/javascript/cadastro-funcionario.js"></script>
 <script>lucide.createIcons();</script>
 </body>
 
