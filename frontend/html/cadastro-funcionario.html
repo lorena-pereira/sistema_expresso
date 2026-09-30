@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Expresso</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../javascript/auth.js"></script>
+
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/cadastro-cliente.css">
+</head>
+
+<body>
+<!-- cabeçalho -->
+<div id="navbar-container"></div>
+
+<!-- conteúdo principal -->
+<main class="main-container">
+    <div class="form-card">
+        <!-- Botão de Voltar -->
+        <a href="funcionarios.html" class="btn-voltar">
+            <i data-lucide="arrow-left"></i> Voltar para Funcionarios
+        </a>
+
+        <h1>Cadastrar Funcionário</h1>
+        <p class="subtitle">Funcionário CLT/PJ <span class="separator">•</span>
+            <span class="link-azul">Formulário de cadastro de funcionário</span></p>
+
+        <form id="formCadastroFuncionario">
+            <input type="hidden" name="status" value="Ativo">
+
+            <h3 class="section-title">DADOS DO FUNCIONÁRIO</h3>
+
+            <div id="dados-funcionario" class="form-grid">
+                <div class="input-group full-width">
+                    <label>Nome completo <span class="req">*</span></label>
+                    <input type="text" name="nomeCompleto" placeholder="Digite o nome completo do funcionário" required>
+                </div>
+
+                <div class="input-group">
+                    <label>CPF <span class="req">*</span></label>
+                    <input type="text" name="cpf" placeholder="000.000.000-00" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Telefone <span class="req">*</span></label>
+                    <input type="tel" name="telefone" placeholder="(00) 00000-0000" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Salário <span class="req">*</span></label>
+                    <input type="text" name="salario" placeholder="R$ 0,00" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Comissão <span class="req">*</span></label>
+                    <input type="text" name="comissao" placeholder="0,00%" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Data de Admissão <span class="req">*</span></label>
+                    <input type="text" name="dataAdmissao" placeholder="DD/MM/AAAA" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Cargo <span class="req">*</span></label>
+                    <select name="cargo" required>
+                        <option value="">Selecione</option>
+                        <option value="atendente">Atendente</option>
+                        <option value="gerente">Gerente</option>
+                        <option value="operadorcaixa">Operador(a) de caixa</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- endereço -->
+            <h3 class="section-title">ENDEREÇO</h3>
+
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>CEP</label>
+                    <input type="text" name="cep" placeholder="00000-000">
+                </div>
+
+                <div class="input-group">
+                    <label>Bairro <span class="req">*</span></label>
+                    <input type="text" name="bairro" placeholder="Digite o bairro" required>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Rua <span class="req">*</span></label>
+                    <input type="text" name="rua" placeholder="Logradouro, avenida, praça..." required>
+                </div>
+
+                <div class="input-group">
+                    <label>Complemento</label>
+                    <input type="text" name="complemento" placeholder="Apto, bloco, sala">
+                </div>
+
+                <div class="input-group">
+                    <label>Número <span class="req">*</span></label>
+                    <input type="text" name="numero" placeholder="N°" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Cidade <span class="req">*</span></label>
+                    <input type="text" name="cidade" placeholder="Digite a cidade" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Estado <span class="req">*</span></label>
+                    <select name="estado" id="estado" required>
+                        <option value="">Selecione o estado</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-salvar">CADASTRAR FUNCIONÁRIO</button>
+        </form>
+    </div>
+</main>
+
+<!-- Toast de Sucesso -->
+<div id="toast-sucess" class="toast-notification">
+    <i data-lucide="check-circle"></i>
+    <span>Funcionário cadastrado com sucesso!</span>
+</div>
+
+<script src="../javascript/navbar.js"></script>
+<script src="../javascript/cadastro-funcionario.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+
+</html>
