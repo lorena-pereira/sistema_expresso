@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!emEdicao || !form) return;
 
         try {
-            const response = await fetch('../../backend/data/clientes.json');
+            const response = await fetch('/api/clientes');
             if (!response.ok) throw new Error('Erro ao buscar cliente');
 
             const clientes = await response.json();

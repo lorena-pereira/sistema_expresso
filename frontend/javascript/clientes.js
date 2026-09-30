@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CARREGAMENTO DE DADOS E TABELA ---
     async function carregarClientes() {
         try {
-            const response = await fetch('../../backend/data/clientes.json');
+            const response = await fetch('/api/clientes');
             if (!response.ok) throw new Error('Erro ao buscar dados');
             todosClientes = await response.json();
             

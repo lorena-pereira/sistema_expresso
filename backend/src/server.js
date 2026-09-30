@@ -3,9 +3,20 @@ import cors from 'cors';
 import fs from 'fs';
 
 const app = express();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '../../frontend')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/html/login.html'));
+});
 
 // caminho /login
 app.post('/login', (req, res) => {
@@ -40,6 +51,10 @@ app.post('/login', (req, res) => {
             message: "Erro no servidor." 
         });
     }
+});
+
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../frontend/html/index.html'));
 });
 
 // caminho /cadastrar-cliente
@@ -81,6 +96,11 @@ app.post('/cadastrar-cliente', (req, res) => {
             message: "Erro no servidor ao salvar o cliente." 
         });
     }
+});
+
+app.get('/api/clientes', (req, res) => {
+    // Usamos o __dirname para acessar a pasta backend de forma segura pelo servidor
+    res.sendFile(path.join(__dirname, '../../backend/data/clientes.json'));
 });
 
 // caminho /clientes/:id

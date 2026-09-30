@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function carregarFuncionarios() {
         try {
-            const response = await fetch('../../backend/data/funcionarios.json');
+            const response = await fetch('/api/funcionarios');
             if (!response.ok) throw new Error('Erro ao buscar dados');
             todosFuncionarios = await response.json();
             
