@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,10 @@
     <title>Sistema Expresso</title>
 
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="../javascript/auth.js"></script>
+    <script src="/javascript/auth.js"></script>
 
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/cadastro-cliente.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/cadastro-cliente.css">
 </head>
 
 <body>
@@ -88,7 +88,7 @@
 
                     <div class="input-group">
                         <label>Número <span class="req">*</span></label>
-                        <input type="text" name="numero" placeholder="N°" required>
+                        <input type="text" pattern="^[1-9][0-9]*[A-Za-z]*$" oninput="this.value = this.value.replace(/[^0-9A-Za-z]/g, '')" name="numero" placeholder="N°" required>
                     </div>
 
                     <div class="input-group">
@@ -142,8 +142,8 @@
         <span>Cliente cadastrado com sucesso!</span>
     </div>
 
-    <script src="../javascript/navbar.js"></script>
-    <script src="../javascript/cadastro-cliente.js"></script>
+    <script src="/javascript/navbar.js"></script>
+    <script src="/javascript/cadastro-cliente.js"></script>
     <script>lucide.createIcons();</script>
 </body>
 

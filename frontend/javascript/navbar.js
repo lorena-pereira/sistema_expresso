@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         // 1. Busca o código HTML da navbar e injeta na página
-        const response = await fetch('navbar.html');
+        const response = await fetch('/html/navbar.html');
         const html = await response.text();
         container.innerHTML = html;
 

@@ -39,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function carregarFuncionarios() {
         try {
-            const response = await fetch('../../backend/data/funcionarios.json');
+            const response = await fetch('/api/funcionarios');
             if (!response.ok) throw new Error('Erro ao buscar dados');
             todosFuncionarios = await response.json();
+
+            todosFuncionarios.sort((a, b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
             
             aplicarFiltros(); 
         } catch (error) {
@@ -212,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!funcionarioSelecionadoParaAcao) return;
 
             try {
-                const response = await fetch('http://localhost:3000/atualizar-status-funcionario', {
+                const response = await fetch('/atualizar-status-funcionario', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

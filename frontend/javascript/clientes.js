@@ -70,9 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CARREGAMENTO DE DADOS E TABELA ---
     async function carregarClientes() {
         try {
-            const response = await fetch('../../backend/data/clientes.json');
+            const response = await fetch('/api/clientes');
             if (!response.ok) throw new Error('Erro ao buscar dados');
             todosClientes = await response.json();
+
+            todosClientes.sort((a, b) => {
+                // Tenta obter o nomeCompleto (PF), se não existir, usa o nomeFantasia (PJ) ou a razaoSocial
+                const nomeA = a.nomeCompleto || a.nomeFantasia || a.razaoSocial || "";
+                const nomeB = b.nomeCompleto || b.nomeFantasia || b.razaoSocial || "";
+                
+                return nomeA.localeCompare(nomeB);
+            });
             
             aplicarFiltros(); 
         } catch (error) {
@@ -283,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!clienteSelecionadoParaAcao) return;
 
             try {
-                const response = await fetch('http://localhost:3000/atualizar-status', {
+                const response = await fetch('/atualizar-status', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

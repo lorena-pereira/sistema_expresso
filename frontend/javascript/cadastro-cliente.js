@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // envia os dados para o servidor Node.js
                 const response = await fetch(emEdicao
-                    ? `http://localhost:3000/clientes/${encodeURIComponent(clienteId)}`
-                    : 'http://localhost:3000/cadastrar-cliente', {
+                    ? `/clientes/${encodeURIComponent(clienteId)}`
+                    : '/cadastrar-cliente', {
                     method: emEdicao ? 'PUT' : 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!emEdicao || !form) return;
 
         try {
-            const response = await fetch('../../backend/data/clientes.json');
+            const response = await fetch('/api/clientes');
             if (!response.ok) throw new Error('Erro ao buscar cliente');
 
             const clientes = await response.json();
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!cliente) {
                 mostrarToast('Cliente não encontrado.', 'erro');
                 setTimeout(() => {
-                    window.location.href = './clientes.html';
+                    window.location.href = '/clientes.html';
                 }, 1500);
                 return;
             }
