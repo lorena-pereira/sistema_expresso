@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // envia a requisição para a API Node.js na porta 3000
-            const response = await fetch('http://localhost:3000/login', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }));
 
                 // Redireciona substituindo a página no histórico
-                window.location.replace('./index.html');
+                window.location.replace('/index.html');
             } else {
                 alert(data.message || 'Erro ao realizar login.');
 

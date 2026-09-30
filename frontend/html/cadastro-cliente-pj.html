@@ -88,7 +88,7 @@
 
                     <div class="input-group">
                         <label>Número <span class="req">*</span></label>
-                        <input type="text" name="numero" placeholder="N°" required>
+                        <input type="text" pattern="^[1-9][0-9]*[A-Za-z]*$" oninput="this.value = this.value.replace(/[^0-9A-Za-z]/g, '')" name="numero" placeholder="N°" required>
                     </div>
 
                     <div class="input-group">

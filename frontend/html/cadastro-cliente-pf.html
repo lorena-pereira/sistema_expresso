@@ -37,7 +37,7 @@
                 <div id="dados-pf" class="form-grid">
                     <div class="input-group full-width">
                         <label>Nome completo <span class="req">*</span></label>
-                        <input type="text" name="nomeCompleto" placeholder="Digite o nome completo" required>
+                        <input type="text" pattern="^[A-Za-zÀ-ÿ⨀\s]+$" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '')" name="nomeCompleto" placeholder="Digite o nome completo" required>
                     </div>
 
                     <div class="input-group">
@@ -94,7 +94,7 @@
 
                     <div class="input-group">
                         <label>Número <span class="req">*</span></label>
-                        <input type="text" name="numero" placeholder="N°" required>
+                        <input type="text" pattern="^[1-9][0-9]*[A-Za-z]*$" oninput="this.value = this.value.replace(/[^0-9A-Za-z]/g, '')" name="numero" placeholder="N°" required>
                     </div>
 
                     <div class="input-group">
