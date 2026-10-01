@@ -299,8 +299,8 @@ body {
 .toast-notification {
     position: fixed;
     top: 90px;
-    right: -400px; /* Fica escondido fora do ecrã inicialmente */
-    background-color: #16A34A; /* Verde de sucesso */
+    right: -400px; 
+    background-color: #16A34A; 
     color: #FFFFFF;
     padding: 16px 24px;
     border-radius: 8px;
@@ -309,12 +309,11 @@ body {
     gap: 12px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     z-index: 9999;
-    /* Animação elástica suave de entrada */
     transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
 }
 
 .toast-notification.show {
-    right: 30px; /* Desliza para dentro do ecrã */
+    right: 30px; 
 }
 
 .toast-notification svg {
@@ -327,12 +326,12 @@ body {
     font-weight: 600;
 }
 
-/* --- Botão Voltar --- */
+/* botão Voltar */
 .btn-voltar {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #64748B; /* Cinza discreto */
+    color: #64748B; 
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
@@ -341,8 +340,8 @@ body {
 }
 
 .btn-voltar:hover {
-    color: #2563EB; /* Azul de destaque ao passar o rato */
-    transform: translateX(-4px); /* Animação subtil para a esquerda */
+    color: #2563EB;
+    transform: translateX(-4px); 
 }
 
 .btn-voltar svg {

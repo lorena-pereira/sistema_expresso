@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
     }
 
+    // filtros de busca e status
     function aplicarFiltros() {
         const termoBusca = inputBusca ? inputBusca.value.toLowerCase().trim() : '';
         const statusSelecionado = selectStatus ? selectStatus.value.toLowerCase() : 'todos';
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inputBusca) inputBusca.addEventListener('input', aplicarFiltros);
     if (selectStatus) selectStatus.addEventListener('change', aplicarFiltros);
 
+    // detalhes do funcionário
     function abrirModalDetalhes(funcionario) {
         const nome = funcionario.nomeCompleto || 'Funcionário sem nome';
         const statusVal = funcionario.status || 'Ativo';
@@ -123,8 +125,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnAcaoDesativar = document.getElementById('btn-acao-desativar');
         const btnAcaoAtivar = document.getElementById('btn-acao-ativar');
 
-        if (btnAcaoDesativar) btnAcaoDesativar.onclick = () => abrirModalStatus(funcionario, 'Inativo');
-        if (btnAcaoAtivar) btnAcaoAtivar.onclick = () => abrirModalStatus(funcionario, 'Ativo');
+        // verifica se o funcionário já está no status desejado antes de abrir o modal
+        if (btnAcaoDesativar) {
+            btnAcaoDesativar.onclick = () => {
+                if (statusVal.toLowerCase() === 'inativo') {
+                    mostrarToast('Ação inválida: O funcionário já está Inativo.', 'erro');
+                    return; // interrompe o código e não abre o modal de confirmação
+                }
+                abrirModalStatus(funcionario, 'Inativo');
+            };
+        }
+
+        if (btnAcaoAtivar) {
+            btnAcaoAtivar.onclick = () => {
+                if (statusVal.toLowerCase() === 'ativo') {
+                    mostrarToast('Ação inválida: O funcionário já está Ativo.', 'erro');
+                    return; // interrompe o código e não abre o modal de confirmação
+                }
+                abrirModalStatus(funcionario, 'Ativo');
+            };
+        }
 
         document.getElementById('detalhe-avatar').textContent = nome.charAt(0).toUpperCase();
         document.getElementById('detalhe-nome').textContent = nome;
@@ -133,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detalhe-sexo-val').textContent = funcionario.sexo || 'Não informado';
         document.getElementById('detalhe-status-val').textContent = statusVal;
         document.getElementById('detalhe-badge-texto').textContent = statusVal;
-        
+
         const badge = document.getElementById('detalhe-badge-status');
         if (badge) badge.className = `badge-status ${statusClass}`;
 
@@ -142,6 +162,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const end = [funcionario.rua, funcionario.numero, funcionario.bairro, funcionario.cidade, funcionario.estado].filter(Boolean).join(', ');
         document.getElementById('detalhe-obs-val').textContent = end || 'Sem endereço cadastrado';
 
+        const elSalario = document.getElementById('detalhe-salario-val');
+        if (elSalario) {
+            elSalario.textContent = `R$ ${funcionario.salario}` || 'Salário não informado';
+        }
+
+        const elComissao = document.getElementById('detalhe-comissao-val');
+        if (elComissao) {
+            elComissao.textContent = `${funcionario.comissao}%` || 'Comissão não informada';
+        }
+
         if (btnAcaoEditar && funcionario.id) {
             btnAcaoEditar.href = `cadastro-funcionario.html?id=${encodeURIComponent(funcionario.id)}`;
         }
@@ -149,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalDetalhes) modalDetalhes.classList.add('active');
     }
 
+    // fechar modal de detalhes
     if (btnFecharDetalhes && modalDetalhes) {
         btnFecharDetalhes.addEventListener('click', () => modalDetalhes.classList.remove('active'));
         modalDetalhes.addEventListener('click', (e) => {
@@ -156,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // abrir modal de confirmação de status
     function abrirModalStatus(funcionario, acao) {
         funcionarioSelecionadoParaAcao = funcionario;
         acaoDesejada = acao; 
@@ -202,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modalConfirmarStatus) modalConfirmarStatus.classList.add('active');
     }
 
+    // fechar modal de confirmação de status
     if (btnCancelarAcao && modalConfirmarStatus) {
         btnCancelarAcao.addEventListener('click', () => modalConfirmarStatus.classList.remove('active'));
         modalConfirmarStatus.addEventListener('click', (e) => {
@@ -209,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // executar ação de ativar/desativar funcionário
     if (btnExecutarAcao) {
         btnExecutarAcao.addEventListener('click', async () => {
             if (!funcionarioSelecionadoParaAcao) return;

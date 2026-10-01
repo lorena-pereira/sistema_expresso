@@ -281,6 +281,46 @@ app.post('/cadastrar-funcionario', (req, res) => {
     }
 });
 
+// caminho /funcionarios/:id (editar Funcionário)
+app.put('/funcionarios/:id', (req, res) => {
+    const funcionariosFilePath = new URL('../data/funcionarios.json', import.meta.url);
+
+    try {
+        const rawData = fs.readFileSync(funcionariosFilePath, 'utf-8');
+        const funcionarios = rawData ? JSON.parse(rawData) : [];
+        
+        const funcionarioIndex = funcionarios.findIndex(f => String(f.id) === req.params.id);
+
+        if (funcionarioIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Funcionário não encontrado.'
+            });
+        }
+
+        // atualiza os dados mantendo o ID e o status original
+        funcionarios[funcionarioIndex] = {
+            ...funcionarios[funcionarioIndex],
+            ...req.body,
+            id: funcionarios[funcionarioIndex].id,
+            status: funcionarios[funcionarioIndex].status 
+        };
+
+        fs.writeFileSync(funcionariosFilePath, JSON.stringify(funcionarios, null, 2));
+
+        return res.status(200).json({
+            success: true,
+            message: 'Funcionário atualizado com sucesso!'
+        });
+    } catch (error) {
+        console.error('Erro interno ao atualizar funcionário:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro no servidor ao atualizar o funcionário.'
+        });
+    }
+});
+
 // caminho /atualizar-status-funcionario
 app.post('/atualizar-status-funcionario', (req, res) => {
     const { id, status } = req.body;

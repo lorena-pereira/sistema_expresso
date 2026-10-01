@@ -168,12 +168,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnAcaoDesativar = document.getElementById('btn-acao-desativar');
         const btnAcaoAtivar = document.getElementById('btn-acao-ativar');
 
+        // verifica se o cliente já está no status desejado antes de abrir o modal
         if (btnAcaoDesativar) {
-            btnAcaoDesativar.onclick = () => abrirModalStatus(cliente, 'Inativo');
+            btnAcaoDesativar.onclick = () => {
+                if (statusVal.toLowerCase() === 'inativo') {
+                    mostrarToast('Ação inválida: O cliente já está Inativo.', 'erro');
+                    return; // interrompe o código e não abre o modal de confirmação
+                }
+                abrirModalStatus(cliente, 'Inativo');
+            };
         }
 
         if (btnAcaoAtivar) {
-            btnAcaoAtivar.onclick = () => abrirModalStatus(cliente, 'Ativo');
+            btnAcaoAtivar.onclick = () => {
+                if (statusVal.toLowerCase() === 'ativo') {
+                    mostrarToast('Ação inválida: O cliente já está Ativo.', 'erro');
+                    return; // interrompe o código e não abre o modal de confirmação
+                }
+                abrirModalStatus(cliente, 'Ativo');
+            };
         }
 
         document.getElementById('detalhe-avatar').textContent = nome.charAt(0).toUpperCase();
