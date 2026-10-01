@@ -187,12 +187,113 @@ app.post('/atualizar-status', (req, res) => {
     }
 });
 
+app.get('/api/funcionarios', (req, res) => {
+    const funcionariosFilePath = new URL('../data/funcionarios.json', import.meta.url);
+
+    try {
+        if (!fs.existsSync(funcionariosFilePath)) {
+            return res.status(200).json([]);
+        }
+
+        const rawData = fs.readFileSync(funcionariosFilePath, 'utf-8');
+        const funcionarios = rawData ? JSON.parse(rawData) : [];
+
+        if (!Array.isArray(funcionarios)) {
+            return res.status(500).json({ message: 'Dados de funcionários inválidos.' });
+        }
+
+        return res.status(200).json(funcionarios);
+    } catch (error) {
+        console.error('Erro interno ao buscar funcionários:', error);
+        return res.status(500).json({ message: 'Erro no servidor ao buscar funcionários.' });
+    }
+});
+
+app.post('/cadastrar-funcionario', (req, res) => {
+    const novoFuncionario = req.body || {};
+    const funcionariosFilePath = new URL('../data/funcionarios.json', import.meta.url);
+    const camposObrigatorios = [
+        'nomeCompleto', 'cpf', 'telefone', 'salario', 'comissao',
+        'dataAdmissao', 'dataNascimento', 'cargo', 'sexo', 'bairro',
+        'rua', 'numero', 'cidade', 'estado'
+    ];
+
+    const camposAusentes = camposObrigatorios.filter(campo =>
+        String(novoFuncionario[campo] ?? '').trim() === ''
+    );
+
+    if (camposAusentes.length > 0) {
+        return res.status(400).json({
+            success: false,
+            message: 'Preencha todos os campos obrigatórios.'
+        });
+    }
+
+    const cpfNormalizado = String(novoFuncionario.cpf).replace(/\D/g, '');
+    if (cpfNormalizado.length !== 11) {
+        return res.status(400).json({
+            success: false,
+            message: 'O CPF deve conter 11 dígitos.'
+        });
+    }
+
+    try {
+        let funcionarios = [];
+        if (fs.existsSync(funcionariosFilePath)) {
+            const rawData = fs.readFileSync(funcionariosFilePath, 'utf-8');
+            funcionarios = rawData ? JSON.parse(rawData) : [];
+        }
+
+        if (!Array.isArray(funcionarios)) {
+            return res.status(500).json({
+                success: false,
+                message: 'Dados de funcionários inválidos.'
+            });
+        }
+
+        const cpfJaCadastrado = funcionarios.some(funcionario =>
+            String(funcionario.cpf || '').replace(/\D/g, '') === cpfNormalizado
+        );
+
+        if (cpfJaCadastrado) {
+            return res.status(409).json({
+                success: false,
+                message: 'Já existe um funcionário cadastrado com este CPF.'
+            });
+        }
+
+        novoFuncionario.id = Date.now();
+        novoFuncionario.status = 'Ativo';
+        funcionarios.push(novoFuncionario);
+        fs.writeFileSync(funcionariosFilePath, JSON.stringify(funcionarios, null, 2));
+
+        return res.status(201).json({
+            success: true,
+            message: 'Funcionário cadastrado com sucesso!',
+            id: novoFuncionario.id
+        });
+    } catch (error) {
+        console.error('Erro interno ao cadastrar funcionário:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro no servidor ao salvar o funcionário.'
+        });
+    }
+});
+
 // caminho /atualizar-status-funcionario
 app.post('/atualizar-status-funcionario', (req, res) => {
     const { id, status } = req.body;
     const funcionariosFilePath = new URL('../data/funcionarios.json', import.meta.url);
 
     try {
+        if (id === undefined || !['Ativo', 'Inativo'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Informe um funcionário e um status válido.'
+            });
+        }
+
         if (!fs.existsSync(funcionariosFilePath)) {
             return res.status(404).json({ 
                 success: false, 
@@ -203,7 +304,7 @@ app.post('/atualizar-status-funcionario', (req, res) => {
         const rawData = fs.readFileSync(funcionariosFilePath, 'utf-8');
         let funcionarios = JSON.parse(rawData);
 
-        const funcionarioIndex = funcionarios.findIndex(f => f.id === id);
+        const funcionarioIndex = funcionarios.findIndex(f => String(f.id) === String(id));
 
         if (funcionarioIndex === -1) {
             return res.status(404).json({ 
