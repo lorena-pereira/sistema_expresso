@@ -36,7 +36,7 @@
             <div id="dados-funcionario" class="form-grid">
                 <div class="input-group full-width">
                     <label>Nome completo <span class="req">*</span></label>
-                    <input type="text" name="nomeCompleto" placeholder="Digite o nome completo do funcionário" required>
+                    <input type="text" name="nomeCompleto" placeholder="Digite o nome completo do funcionário" pattern="^[A-Za-zÀ-ÿ⨀\s]+$" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '')" required>
                 </div>
 
                 <div class="input-group">

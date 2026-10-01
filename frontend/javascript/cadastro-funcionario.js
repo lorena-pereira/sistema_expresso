@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // aplica as máscaras e bloqueios nos inputs
     const inputNome = document.querySelector('input[name="nomeCompleto"]');
     if (inputNome) {
-        // bloqueia números e caracteres especiais, aceitando apenas letras e espaços
         inputNome.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
         });
@@ -80,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const inputNumero = document.querySelector('input[name="numero"]');
     if (inputNumero) {
-        // permite apenas números e letras 
         inputNumero.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^0-9A-Za-z]/g, '');
         });
@@ -102,11 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const inputSalario = document.querySelector('input[name="salario"]');
     if (inputSalario) {
+        inputSalario.type = 'text'; 
         inputSalario.addEventListener('input', (e) => e.target.value = mascaraSalario(e.target.value));
     }
 
     const inputComissao = document.querySelector('input[name="comissao"]');
     if (inputComissao) {
+        inputComissao.type = 'text'; 
         inputComissao.addEventListener('input', (e) => e.target.value = mascaraComissao(e.target.value));
     }
 
@@ -192,6 +192,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const dadosFuncionario = Object.fromEntries(new FormData(form).entries());
             dadosFuncionario.nomeCompleto = dadosFuncionario.nomeCompleto.trim();
             dadosFuncionario.cpf = dadosFuncionario.cpf.trim();
+
+            // Limpeza do salário antes de enviar para o backend
+            if (dadosFuncionario.salario) {
+                const salarioLimpo = dadosFuncionario.salario
+                    .replace(/[R$\s.]/g, '') 
+                    .replace(',', '.');      
+                dadosFuncionario.salario = parseFloat(salarioLimpo) || 0;
+            }
+
+            // Limpeza da comissão antes de enviar para o backend
+            if (dadosFuncionario.comissao) {
+                const comissaoLimpa = dadosFuncionario.comissao
+                    .replace(/[% \.]/g, '') 
+                    .replace(',', '.');     
+                dadosFuncionario.comissao = parseFloat(comissaoLimpa) || 0;
+            }
 
             const textoOriginal = botaoSalvar ? botaoSalvar.textContent : '';
             if (botaoSalvar) {
