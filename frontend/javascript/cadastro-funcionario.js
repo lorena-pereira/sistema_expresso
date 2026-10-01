@@ -25,6 +25,80 @@ document.addEventListener('DOMContentLoaded', () => {
         toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
+    // funções de formatação usando Regex
+    const mascaraCPF = (v) => {
+        v = v.replace(/\D/g, ""); 
+        if (v.length > 11) v = v.slice(0, 11); 
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        return v;
+    };
+
+    const mascaraTelefone = (v) => {
+        v = v.replace(/\D/g, "");
+        if (v.length > 11) v = v.slice(0, 11); 
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+        v = v.replace(/(\d)(\d{4})$/, "$1-$2");
+        return v;
+    };
+
+    // Máscara de Salário (Moeda BRL)
+    const mascaraSalario = (v) => {
+        v = v.replace(/\D/g, "");
+        if (!v) return "";
+        v = (parseInt(v, 10) / 100);
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(v);
+    };
+
+    // Máscara de Comissão (Porcentagem) limitada a 100%
+    const mascaraComissao = (v) => {
+        v = v.replace(/\D/g, "");
+        if (!v) return "";
+        
+        let valorInteiro = parseInt(v, 10);
+        
+        // Limita o valor máximo a 10000 (que equivale a 100,00%)
+        if (valorInteiro > 10000) {
+            valorInteiro = 10000;
+        }
+
+        // Divide por 10000 porque o Intl de porcentagem multiplica o valor por 100 automaticamente
+        v = (valorInteiro / 10000);
+        
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'percent',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(v);
+    };
+
+    // capturar os campos no ecrã e aplicar a escuta 
+    const inputCpf = document.querySelector('input[name="cpf"]');
+    if (inputCpf) {
+        inputCpf.addEventListener('input', (e) => e.target.value = mascaraCPF(e.target.value));
+    }
+
+    const inputsTelefone = document.querySelectorAll('input[name="telefone"]');
+    inputsTelefone.forEach(input => {
+        input.addEventListener('input', (e) => e.target.value = mascaraTelefone(e.target.value));
+    });
+
+    const inputSalario = document.querySelector('input[name="salario"]');
+    if (inputSalario) {
+        inputSalario.type = 'text'; // Força o input a ser texto para aceitar R$ e vírgula
+        inputSalario.addEventListener('input', (e) => e.target.value = mascaraSalario(e.target.value));
+    }
+
+    const inputComissao = document.querySelector('input[name="comissao"]');
+    if (inputComissao) {
+        inputComissao.type = 'text'; // Força o input a ser texto para aceitar % e vírgula
+        inputComissao.addEventListener('input', (e) => e.target.value = mascaraComissao(e.target.value));
+    }
+
     async function preencherEndereco(cep) {
         const requisicaoAtual = ++requisicaoCep;
 
@@ -76,6 +150,22 @@ document.addEventListener('DOMContentLoaded', () => {
         dadosFuncionario.nomeCompleto = dadosFuncionario.nomeCompleto.trim();
         dadosFuncionario.cpf = dadosFuncionario.cpf.trim();
 
+        // Limpeza do salário
+        if (dadosFuncionario.salario) {
+            const salarioLimpo = dadosFuncionario.salario
+                .replace(/[R$\s.]/g, '') 
+                .replace(',', '.');      
+            dadosFuncionario.salario = parseFloat(salarioLimpo) || 0;
+        }
+
+        // Limpeza da comissão
+        if (dadosFuncionario.comissao) {
+            const comissaoLimpa = dadosFuncionario.comissao
+                .replace(/[% \.]/g, '') // Remove símbolo %, pontos de milhar e espaços
+                .replace(',', '.');     // Substitui a vírgula decimal por ponto
+            dadosFuncionario.comissao = parseFloat(comissaoLimpa) || 0;
+        }
+
         const textoOriginal = botaoSalvar ? botaoSalvar.textContent : '';
         if (botaoSalvar) {
             botaoSalvar.disabled = true;
@@ -97,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             mostrarToast(resultado.message, 'sucesso');
             form.reset();
-            setTimeout(() => window.location.assign('./funcionarios.html'), 1200);
+            setTimeout(() => window.location.assign('/html/funcionarios.html'), 1200);
         } catch (error) {
             console.error('Erro ao cadastrar funcionário:', error);
             mostrarToast('Não foi possível conectar ao servidor.', 'erro');
