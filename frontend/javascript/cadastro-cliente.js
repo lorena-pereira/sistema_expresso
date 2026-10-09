@@ -48,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
-            const tipoPessoaInput = document.querySelector('input[name="tipoPessoa"]');
-            if (tipoPessoaInput) data.tipo = tipoPessoaInput.value;
-
             try {
                 // envia os dados para o servidor Node.js
                 const response = await fetch(emEdicao

@@ -1,2 +1,3 @@
 backend/data/clientes.json
 backend/data/funcionarios.json
+backend/.env

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+import pool from '../db/db.js';
 
 const app = express();
 import path from 'path';
@@ -57,50 +58,238 @@ app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/html/index.html'));
 });
 
-// caminho /cadastrar-cliente
-app.post('/cadastrar-cliente', (req, res) => {
-    // req.body contém os dados que enviamos pelo fetch no front-end
-    const novoCliente = req.body; 
 
-    // procura o arquivo JSON de clientes
-    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
+app.post('/cadastrar-cliente', async (req, res) => {
+    const dados = req.body;
+
+    const conexao = await pool.getConnection();
 
     try {
-        let clientes = [];
-        
-        // verifica se o arquivo já existe para ler os dados antigos
-        if (fs.existsSync(clientesFilePath)) {
-            const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
-            // se o arquivo estiver vazio, previne erros no parse
-            if (rawData) {
-                clientes = JSON.parse(rawData);
+        const tipo = {
+            PF: 'Pessoa Física',
+            PJ: 'Pessoa Jurídica',
+            'Pessoa Física': 'Pessoa Física',
+            'Pessoa Jurídica': 'Pessoa Jurídica'
+        }[dados.tipo];
+
+        if (!tipo) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tipo de cliente inválido.'
+            });
+        }
+
+        const nome = (
+            tipo === 'Pessoa Física'
+                ? dados.nomeCompleto
+                : dados.nomeFantasia
+        )?.trim();
+
+        const rua = dados.rua?.trim();
+        const uf = dados.estado?.trim().toUpperCase();
+        const cidade = dados.cidade?.trim();
+        const bairro = dados.bairro?.trim();
+        const numero = dados.numero?.trim();
+
+        if (!nome || !rua || !uf || !cidade || !bairro || !numero) {
+            return res.status(400).json({
+                success: false,
+                message: 'Preencha todos os campos obrigatórios.'
+            });
+        }
+
+        if (nome.length > 100 || rua.length > 150 ||
+            bairro.length > 100 || cidade.length > 100 ||
+            numero.length > 10 || uf.length !== 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'Um ou mais campos possuem tamanho inválido.'
+            });
+        }
+
+        const cpf = dados.cpf?.replace(/\D/g, '');
+        const cnpj = dados.cnpj?.replace(/\D/g, '');
+        const telefone = dados.telefone?.trim();
+        const cep = dados.cep?.replace(/\D/g, '');
+
+        if (tipo === 'Pessoa Física') {
+            if (!cpf || cpf.length !== 11) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O CPF deve conter 11 dígitos.'
+                });
+            }
+
+            const sexosPermitidos = ['M', 'F', 'O', 'NB', 'I', 'NE'];
+
+            if (!sexosPermitidos.includes(dados.sexo)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Selecione um sexo válido.'
+                });
+            }
+        } else {
+            if (!cnpj || cnpj.length !== 14) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O CNPJ deve conter 14 dígitos.'
+                });
+            }
+
+            if (!dados.razaoSocial?.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Informe a razão social.'
+                });
+            }
+
+            if (dados.razaoSocial.trim().length > 50) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'A razão social deve ter até 50 caracteres.'
+                });
             }
         }
 
-        // adiciona um ID único simples e salva o novo cliente na lista
-        novoCliente.id = Date.now(); 
-        clientes.push(novoCliente);
+        if (!telefone || telefone.length > 15) {
+            return res.status(400).json({
+                success: false,
+                message: 'Informe um telefone válido.'
+            });
+        }
 
-        // grava a lista atualizada de volta no arquivo
-        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+        if (cep && cep.length !== 8) {
+            return res.status(400).json({
+                success: false,
+                message: 'O CEP deve conter 8 dígitos.'
+            });
+        }
 
-        return res.status(201).json({ 
-            success: true, 
-            message: "Cliente cadastrado com sucesso!" 
+        await conexao.beginTransaction();
+
+        const [resultado] = await conexao.execute(
+            `INSERT INTO Cliente
+                (nome, tipo, cep, numero, rua, bairro, uf,
+                 cidade, complemento, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                nome,
+                tipo,
+                cep || null,
+                numero,
+                rua,
+                bairro,
+                uf,
+                cidade,
+                dados.complemento?.trim() || null,
+                dados.status === 'Inativo' ? 'Inativo' : 'Ativo'
+            ]
+        );
+
+        const idCliente = resultado.insertId;
+
+        if (tipo === 'Pessoa Física') {
+            await conexao.execute(
+                `INSERT INTO Pessoa_Fisica
+                    (cpf, sexo, fk_id_cliente)
+                 VALUES (?, ?, ?)`,
+                [cpf, dados.sexo, idCliente]
+            );
+        } else {
+            await conexao.execute(
+                `INSERT INTO Pessoa_Juridica
+                    (cnpj, razao_social, inscricao_estadual,
+                     fk_id_cliente)
+                 VALUES (?, ?, ?, ?)`,
+                [
+                    cnpj,
+                    dados.razaoSocial.trim(),
+                    dados.inscricaoEstadual?.trim() || null,
+                    idCliente
+                ]
+            );
+        }
+
+        await conexao.execute(
+            `INSERT INTO Telefone_Cliente
+                (telefone, fk_id_cliente)
+             VALUES (?, ?)`,
+            [telefone, idCliente]
+        );
+
+        await conexao.commit();
+
+        return res.status(201).json({
+            success: true,
+            id: idCliente,
+            message: 'Cliente cadastrado com sucesso!'
         });
 
     } catch (error) {
-        console.error("Erro interno ao cadastrar:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: "Erro no servidor ao salvar o cliente." 
+        try {
+            await conexao.rollback();
+        } catch (erroRollback) {
+            console.error('Erro ao desfazer transação:', erroRollback);
+        }
+
+        console.error('Erro ao cadastrar cliente:', error);
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                success: false,
+                message: 'CPF ou CNPJ já cadastrado.'
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Não foi possível cadastrar o cliente.'
         });
+
+    } finally {
+        conexao.release();
     }
 });
 
-app.get('/api/clientes', (req, res) => {
-    // Usamos o __dirname para acessar a pasta backend de forma segura pelo servidor
-    res.sendFile(path.join(__dirname, '../../backend/data/clientes.json'));
+app.get('/api/clientes', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                c.*, 
+                pf.cpf, 
+                pj.cnpj, 
+                tc.telefone 
+            FROM Cliente c
+            LEFT JOIN Pessoa_Fisica pf ON c.id_cliente = pf.fk_id_cliente
+            LEFT JOIN Pessoa_Juridica pj ON c.id_cliente = pj.fk_id_cliente
+            LEFT JOIN Telefone_Cliente tc ON c.id_cliente = tc.fk_id_cliente
+        `;
+        
+        const [rows] = await pool.query(query);
+        
+        const clientesFormatados = rows.map(cliente => {
+            // Define o documento correto dependendo se é Pessoa Física ou Jurídica
+            const documentoFormatado = cliente.tipo === 'Pessoa Física' ? cliente.cpf : cliente.cnpj;
+
+            return {
+                ...cliente,
+                id: cliente.id_cliente,
+                nomeCompleto: cliente.nome,
+                nome: cliente.nome,
+                razaoSocial: cliente.nome,
+                // Mapeia para as chaves que o frontend usa para exibir na tela:
+                cpfCnpj: documentoFormatado || 'Não informado',
+                cnpj: documentoFormatado || 'Não informado',
+                telefone: cliente.telefone || 'Não informado',
+                status: cliente.status || 'Ativo'
+            };
+        });
+
+        res.status(200).json(clientesFormatados);
+    } catch (error) {
+        console.error('Erro ao buscar clientes no MySQL:', error);
+        res.status(500).json({ message: 'Erro no servidor ao buscar clientes.' });
+    }
 });
 
 // caminho /clientes/:id
