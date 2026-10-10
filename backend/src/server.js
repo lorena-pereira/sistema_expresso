@@ -61,6 +61,7 @@ app.get('/index.html', (req, res) => {
 
 app.post('/cadastrar-cliente', async (req, res) => {
     const dados = req.body;
+    console.log('Data recebida no POST:', req.body.dataNascimento);
 
     const conexao = await pool.getConnection();
 
@@ -128,6 +129,44 @@ app.post('/cadastrar-cliente', async (req, res) => {
                     message: 'Selecione um sexo válido.'
                 });
             }
+
+            const dataNascimento = dados.dataNascimento;
+
+            if (
+                typeof dataNascimento !== 'string' ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(dataNascimento)
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Informe uma data de nascimento válida.'
+                });
+            }
+
+            const [ano, mes, dia] = dataNascimento.split('-').map(Number);
+            const data = new Date(Date.UTC(ano, mes - 1, dia));
+
+            const dataValida =
+                data.getUTCFullYear() === ano &&
+                data.getUTCMonth() === mes - 1 &&
+                data.getUTCDate() === dia;
+
+            const hoje = new Date();
+            const hojeUTC = Date.UTC(
+                hoje.getFullYear(),
+                hoje.getMonth(),
+                hoje.getDate()
+            );
+
+            if (
+                !dataValida ||
+                ano < 1900 ||
+                data.getTime() > hojeUTC
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'A data de nascimento é inválida ou está no futuro.'
+                });
+            }
         } else {
             if (!cnpj || cnpj.length !== 14) {
                 return res.status(400).json({
@@ -189,12 +228,38 @@ app.post('/cadastrar-cliente', async (req, res) => {
         const idCliente = resultado.insertId;
 
         if (tipo === 'Pessoa Física') {
+            console.log('Dados antes do INSERT:', {
+                cpf,
+                sexo: dados.sexo,
+                dataNascimento: dados.dataNascimento,
+                idCliente
+            });
+
             await conexao.execute(
                 `INSERT INTO Pessoa_Fisica
-                    (cpf, sexo, fk_id_cliente)
-                 VALUES (?, ?, ?)`,
-                [cpf, dados.sexo, idCliente]
+                    (cpf, sexo, data_nascimento, fk_id_cliente)
+                VALUES (?, ?, ?, ?)`,
+                [
+                    cpf,
+                    dados.sexo,
+                    dados.dataNascimento,
+                    idCliente
+                ]
             );
+
+            // Verifica o registro dentro da própria transação
+            const [verificacao] = await conexao.execute(
+                `SELECT
+                    fk_id_cliente,
+                    cpf,
+                    sexo,
+                    DATE_FORMAT(data_nascimento, '%Y-%m-%d') AS data_nascimento
+                FROM Pessoa_Fisica
+                WHERE fk_id_cliente = ?`,
+                [idCliente]
+            );
+
+            console.log('Dados gravados no MySQL:', verificacao);
         } else {
             await conexao.execute(
                 `INSERT INTO Pessoa_Juridica
@@ -254,124 +319,379 @@ app.post('/cadastrar-cliente', async (req, res) => {
 app.get('/api/clientes', async (req, res) => {
     try {
         const query = `
-            SELECT 
-                c.*, 
-                pf.cpf, 
-                pj.cnpj, 
-                tc.telefone 
+            SELECT
+                c.*,
+                pf.cpf,
+                pf.sexo,
+                DATE_FORMAT(pf.data_nascimento, '%Y-%m-%d') AS data_nascimento,
+                pj.cnpj,
+                pj.razao_social,
+                pj.inscricao_estadual,
+                tc.telefone
             FROM Cliente c
-            LEFT JOIN Pessoa_Fisica pf ON c.id_cliente = pf.fk_id_cliente
-            LEFT JOIN Pessoa_Juridica pj ON c.id_cliente = pj.fk_id_cliente
-            LEFT JOIN Telefone_Cliente tc ON c.id_cliente = tc.fk_id_cliente
+            LEFT JOIN Pessoa_Fisica pf
+                ON c.id_cliente = pf.fk_id_cliente
+            LEFT JOIN Pessoa_Juridica pj
+                ON c.id_cliente = pj.fk_id_cliente
+            LEFT JOIN Telefone_Cliente tc
+                ON c.id_cliente = tc.fk_id_cliente
         `;
-        
+
         const [rows] = await pool.query(query);
-        
+
         const clientesFormatados = rows.map(cliente => {
-            // Define o documento correto dependendo se é Pessoa Física ou Jurídica
-            const documentoFormatado = cliente.tipo === 'Pessoa Física' ? cliente.cpf : cliente.cnpj;
+            const pessoaFisica = cliente.tipo === 'Pessoa Física';
 
             return {
                 ...cliente,
                 id: cliente.id_cliente,
-                nomeCompleto: cliente.nome,
-                nome: cliente.nome,
-                razaoSocial: cliente.nome,
-                // Mapeia para as chaves que o frontend usa para exibir na tela:
-                cpfCnpj: documentoFormatado || 'Não informado',
-                cnpj: documentoFormatado || 'Não informado',
-                telefone: cliente.telefone || 'Não informado',
+
+                nomeCompleto: pessoaFisica ? cliente.nome : '',
+                nomeFantasia: pessoaFisica ? '' : cliente.nome,
+
+                cpf: cliente.cpf || '',
+                sexo: cliente.sexo || '',
+                dataNascimento: cliente.data_nascimento || '',
+
+                cnpj: cliente.cnpj || '',
+                razaoSocial: cliente.razao_social || '',
+                inscricaoEstadual: cliente.inscricao_estadual || '',
+
+                cpfCnpj: pessoaFisica
+                    ? (cliente.cpf || '')
+                    : (cliente.cnpj || ''),
+
+                telefone: cliente.telefone || '',
+                cep: cliente.cep || '',
+                estado: cliente.uf || '',
+                complemento: cliente.complemento || '',
                 status: cliente.status || 'Ativo'
             };
         });
 
         res.status(200).json(clientesFormatados);
+
     } catch (error) {
         console.error('Erro ao buscar clientes no MySQL:', error);
-        res.status(500).json({ message: 'Erro no servidor ao buscar clientes.' });
+
+        res.status(500).json({
+            message: 'Erro no servidor ao buscar clientes.'
+        });
     }
 });
 
 // caminho /clientes/:id
-app.put('/clientes/:id', (req, res) => {
-    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
+app.put('/clientes/:id', async (req, res) => {
+    const conexao = await pool.getConnection();
 
     try {
-        const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
-        const clientes = rawData ? JSON.parse(rawData) : [];
-        const clienteIndex = clientes.findIndex(cliente => String(cliente.id) === req.params.id);
+        const id = Number(req.params.id);
 
-        if (clienteIndex === -1) {
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de cliente inválido.'
+            });
+        }
+
+        const dados = req.body;
+
+        await conexao.beginTransaction();
+
+        const [clientes] = await conexao.execute(
+            `SELECT id_cliente, tipo
+             FROM Cliente
+             WHERE id_cliente = ?
+             FOR UPDATE`,
+            [id]
+        );
+
+        if (clientes.length === 0) {
+            await conexao.rollback();
+
             return res.status(404).json({
                 success: false,
                 message: 'Cliente não encontrado.'
             });
         }
 
-        clientes[clienteIndex] = {
-            ...clientes[clienteIndex],
-            ...req.body,
-            id: clientes[clienteIndex].id
-        };
+        const clienteExistente = clientes[0];
 
-        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+        const pessoaFisica =
+            clienteExistente.tipo === 'Pessoa Física';
+
+        // O formulário envia PF/PJ, mas o banco usa nomes completos.
+        const tipoEnviado = dados.tipo === 'PF'
+            ? 'Pessoa Física'
+            : dados.tipo === 'PJ'
+                ? 'Pessoa Jurídica'
+                : dados.tipo;
+
+        if (tipoEnviado !== clienteExistente.tipo) {
+            await conexao.rollback();
+
+            return res.status(400).json({
+                success: false,
+                message: 'Não é permitido alterar o tipo do cliente durante a edição.'
+            });
+        }
+
+        const nome = pessoaFisica
+            ? dados.nomeCompleto
+            : dados.nomeFantasia;
+
+        if (!nome || !nome.trim()) {
+            await conexao.rollback();
+
+            return res.status(400).json({
+                success: false,
+                message: 'O nome do cliente é obrigatório.'
+            });
+        }
+
+        const cep = String(dados.cep || '').replace(/\D/g, '');
+
+        if (cep && cep.length !== 8) {
+            await conexao.rollback();
+
+            return res.status(400).json({
+                success: false,
+                message: 'O CEP deve conter 8 dígitos.'
+            });
+        }
+
+        const telefone = String(dados.telefone || '').trim();
+
+        if (!telefone || telefone.length > 15) {
+            await conexao.rollback();
+
+            return res.status(400).json({
+                success: false,
+                message: 'Informe um telefone válido.'
+            });
+        }
+
+        await conexao.execute(
+            `UPDATE Cliente
+             SET nome = ?,
+                 cep = ?,
+                 numero = ?,
+                 rua = ?,
+                 bairro = ?,
+                 uf = ?,
+                 cidade = ?,
+                 complemento = ?
+             WHERE id_cliente = ?`,
+            [
+                nome.trim(),
+                cep || null,
+                dados.numero || null,
+                dados.rua,
+                dados.bairro || null,
+                dados.estado,
+                dados.cidade,
+                dados.complemento || null,
+                id
+            ]
+        );
+
+        if (pessoaFisica) {
+            const cpf = String(dados.cpf || '').replace(/\D/g, '');
+
+            if (cpf.length !== 11) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'O CPF deve conter 11 dígitos.'
+                });
+            }
+
+            if (!['M', 'F', 'O', 'NB', 'I', 'NE'].includes(dados.sexo)) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Selecione uma opção válida para sexo.'
+                });
+            }
+
+            const dataNascimento = dados.dataNascimento;
+
+            if (
+                typeof dataNascimento !== 'string' ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(dataNascimento)
+            ) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Informe uma data de nascimento válida.'
+                });
+            }
+
+            const [ano, mes, dia] = dataNascimento.split('-').map(Number);
+            const data = new Date(Date.UTC(ano, mes - 1, dia));
+
+            const dataValida =
+                data.getUTCFullYear() === ano &&
+                data.getUTCMonth() === mes - 1 &&
+                data.getUTCDate() === dia;
+
+            const hoje = new Date();
+            const hojeUTC = Date.UTC(
+                hoje.getFullYear(),
+                hoje.getMonth(),
+                hoje.getDate()
+            );
+
+            if (!dataValida || ano < 1900 || data.getTime() > hojeUTC) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'A data de nascimento é inválida ou está no futuro.'
+                });
+            }
+
+            await conexao.execute(
+                `UPDATE Pessoa_Fisica
+                SET cpf = ?,
+                    sexo = ?,
+                    data_nascimento = ?
+                WHERE fk_id_cliente = ?`,
+                [
+                    cpf,
+                    dados.sexo,
+                    dados.dataNascimento,
+                    id
+                ]
+            );
+        } else {
+            const cnpj = String(dados.cnpj || '').replace(/\D/g, '');
+
+            if (cnpj.length !== 14) {
+                await conexao.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'O CNPJ deve conter 14 dígitos.'
+                });
+            }
+
+            await conexao.execute(
+                `UPDATE Pessoa_Juridica
+                 SET cnpj = ?,
+                     razao_social = ?,
+                     inscricao_estadual = ?
+                 WHERE fk_id_cliente = ?`,
+                [
+                    cnpj,
+                    dados.razaoSocial,
+                    dados.inscricaoEstadual || null,
+                    id
+                ]
+            );
+        }
+
+        // O formulário trabalha com um telefone por cliente.
+        await conexao.execute(
+            'DELETE FROM Telefone_Cliente WHERE fk_id_cliente = ?',
+            [id]
+        );
+
+        await conexao.execute(
+            `INSERT INTO Telefone_Cliente (telefone, fk_id_cliente)
+             VALUES (?, ?)`,
+            [telefone, id]
+        );
+
+        await conexao.commit();
 
         return res.status(200).json({
             success: true,
             message: 'Cliente atualizado com sucesso!'
         });
+
     } catch (error) {
-        console.error('Erro interno ao atualizar:', error);
+        await conexao.rollback();
+
+        console.error('Erro ao atualizar cliente:', error);
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                success: false,
+                message: 'O CPF ou CNPJ informado já está cadastrado.'
+            });
+        }
+
         return res.status(500).json({
             success: false,
-            message: 'Erro no servidor ao atualizar o cliente.'
+            message: 'Erro interno ao atualizar o cliente.'
         });
+
+    } finally {
+        conexao.release();
     }
 });
 
-// caminho /atualizar-status
-app.post('/atualizar-status', (req, res) => {
-    const { id, status } = req.body;
-
-    const clientesFilePath = new URL('../data/clientes.json', import.meta.url);
-
+// Atualizar status de um cliente no MySQL
+app.post('/atualizar-status', async (req, res) => {
     try {
-        if (!fs.existsSync(clientesFilePath)) {
-            return res.status(404).json({ 
-                success: false, 
-                message: "Arquivo de clientes não encontrado." 
+        const { id, status } = req.body;
+
+        // Valida o ID recebido
+        const idCliente = Number(id);
+
+        if (!Number.isInteger(idCliente) || idCliente <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de cliente inválido.'
             });
         }
 
-        const rawData = fs.readFileSync(clientesFilePath, 'utf-8');
-        let clientes = JSON.parse(rawData);
-
-        // Procura o cliente pelo ID
-        const clienteIndex = clientes.findIndex(c => c.id === id);
-
-        if (clienteIndex === -1) {
-            return res.status(404).json({ 
-                success: false, 
-                message: "Cliente não encontrado." 
+        // Valida os valores permitidos pelo banco
+        if (!['Ativo', 'Inativo'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Status inválido. Utilize Ativo ou Inativo.'
             });
         }
 
-        // Atualiza o status do cliente encontrado
-        clientes[clienteIndex].status = status;
+        // Verifica se o cliente existe
+        const [clientes] = await pool.execute(
+            `SELECT id_cliente
+             FROM Cliente
+             WHERE id_cliente = ?`,
+            [idCliente]
+        );
 
-        // Salva a lista modificada de volta no arquivo JSON
-        fs.writeFileSync(clientesFilePath, JSON.stringify(clientes, null, 2));
+        if (clientes.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cliente não encontrado.'
+            });
+        }
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "Status atualizado com sucesso!" 
+        // Atualiza o status diretamente no MySQL
+        await pool.execute(
+            `UPDATE Cliente
+             SET status = ?
+             WHERE id_cliente = ?`,
+            [status, idCliente]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Status atualizado com sucesso!'
         });
 
     } catch (error) {
-        console.error("Erro interno ao atualizar status:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: "Erro no servidor ao atualizar o status." 
+        console.error('Erro ao atualizar status:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Erro no servidor ao atualizar o status.'
         });
     }
 });

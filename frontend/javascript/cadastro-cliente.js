@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
+            console.log('Dados enviados ao backend:', data);
+            console.log('Data de nascimento:', data.dataNascimento);
+
             try {
                 // envia os dados para o servidor Node.js
                 const response = await fetch(emEdicao
@@ -100,10 +103,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            Object.entries(cliente).forEach(([campo, valor]) => {
+            
+            const campos = [
+                'nomeCompleto',
+                'nomeFantasia',
+                'cpf',
+                'sexo',
+                'dataNascimento',
+                'cnpj',
+                'razaoSocial',
+                'inscricaoEstadual',
+                'telefone',
+                'cep',
+                'bairro',
+                'rua',
+                'complemento',
+                'numero',
+                'cidade',
+                'estado',
+                'status'
+            ];
+
+            campos.forEach(campo => {
                 const input = form.elements.namedItem(campo);
-                if (input && typeof input.value !== 'undefined') input.value = valor ?? '';
+
+                if (input && cliente[campo] !== undefined) {
+                    input.value = cliente[campo] ?? '';
+                }
             });
+
+            // Garante que o tipo correto seja enviado na edição.
+            const campoTipo = form.elements.namedItem('tipo');
+
+            if (campoTipo) {
+                campoTipo.value = cliente.tipo === 'Pessoa Física' ? 'PF' : 'PJ';
+            }
+
+
         } catch (error) {
             console.error('Erro ao carregar cliente:', error);
             mostrarToast('Não foi possível carregar os dados do cliente.', 'erro');

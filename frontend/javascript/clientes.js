@@ -25,6 +25,84 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
+    
+    // --- FORMATAÇÃO DOS DADOS PARA EXIBIÇÃO ---
+
+    function somenteDigitos(valor) {
+        return String(valor || '').replace(/\D/g, '');
+    }
+
+    function formatarCPF(valor) {
+        const cpf = somenteDigitos(valor);
+
+        if (cpf.length !== 11) return valor || 'Não informado';
+
+        return cpf.replace(
+            /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
+            '$1.$2.$3-$4'
+        );
+    }
+
+    function formatarCNPJ(valor) {
+        const cnpj = somenteDigitos(valor);
+
+        if (cnpj.length !== 14) return valor || 'Não informado';
+
+        return cnpj.replace(
+            /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+            '$1.$2.$3/$4-$5'
+        );
+    }
+
+    function formatarTelefone(valor) {
+        const telefone = somenteDigitos(valor);
+
+        if (telefone.length === 11) {
+            return telefone.replace(
+                /^(\d{2})(\d{5})(\d{4})$/,
+                '($1) $2-$3'
+            );
+        }
+
+        if (telefone.length === 10) {
+            return telefone.replace(
+                /^(\d{2})(\d{4})(\d{4})$/,
+                '($1) $2-$3'
+            );
+        }
+
+        return valor || 'Não informado';
+    }
+
+    function formatarCEP(valor) {
+        const cep = somenteDigitos(valor);
+
+        if (cep.length !== 8) return valor || 'Não informado';
+
+        return cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+    }
+
+    function ehPessoaFisica(cliente) {
+        return cliente.tipo === 'PF' ||
+               cliente.tipo === 'Pessoa Física';
+    }
+
+    function obterNomeCliente(cliente) {
+        return cliente.nomeCompleto ||
+               cliente.nomeFantasia ||
+               cliente.nome ||
+               cliente.razaoSocial ||
+               'Cliente sem nome';
+    }
+
+    function obterDocumentoFormatado(cliente) {
+        if (ehPessoaFisica(cliente)) {
+            return formatarCPF(cliente.cpf);
+        }
+
+        return formatarCNPJ(cliente.cnpj);
+    }
+
     const listaContainer = document.getElementById('lista-clientes-body');
     const inputBusca = document.getElementById('input-busca-cliente');
     const selectStatus = document.getElementById('select-filtro-status');
@@ -98,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         clientes.forEach(cliente => {
-            const nomeExibicao = String(cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome');
-            const documentoExibicao = String(cliente.cpf || cliente.cnpj || 'Não informado');
+            const nomeExibicao = obterNomeCliente(cliente);
+            const documentoExibicao = obterDocumentoFormatado(cliente);
             const inicial = nomeExibicao.charAt(0).toUpperCase();
             const statusTexto = String(cliente.status || 'Ativo');
             const statusClass = statusTexto.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
@@ -157,11 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- MODAL DE DETALHES ---
     function abrirModalDetalhes(cliente) {
-        const nome = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
-        const docLabel = cliente.cpf ? 'CPF' : 'CNPJ';
-        const docValue = cliente.cpf || cliente.cnpj || 'Não informado';
-        const extraLabel = cliente.tipo === 'PF' ? 'SEXO' : 'INSC. ESTADUAL';
-        const extraValue = cliente.tipo === 'PF' ? (cliente.sexo || 'Não informado') : (cliente.inscricaoEstadual || 'Não informado');
+        const nome = obterNomeCliente(cliente);
+        const pessoaFisica = ehPessoaFisica(cliente);
+
+        const docLabel = pessoaFisica ? 'CPF' : 'CNPJ';
+        const docValue = obterDocumentoFormatado(cliente);
+
+        const extraLabel = pessoaFisica ? 'SEXO' : 'INSC. ESTADUAL';
+
+        const extraValue = pessoaFisica
+            ? (cliente.sexo || 'Não informado')
+            : (cliente.inscricaoEstadual || 'Não informado');
         const statusVal = cliente.status || 'Ativo';
         const statusClass = statusVal.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
         
@@ -201,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('detalhe-badge-status');
         if (badge) badge.className = `badge-status ${statusClass}`;
 
-        document.getElementById('detalhe-telefone-val').textContent = cliente.telefone || 'Não informado';
+        document.getElementById('detalhe-telefone-val').textContent = formatarTelefone(cliente.telefone);
 
         const end = [cliente.rua, cliente.numero, cliente.bairro, cliente.cidade, cliente.estado]
             .filter(Boolean).join(', ');
@@ -246,17 +330,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const nascEl = document.getElementById('status-val-nascimento');
         const sexoEl = document.getElementById('status-val-sexo');
 
-        nomeEl.textContent = cliente.nomeCompleto || cliente.razaoSocial || 'Cliente sem nome';
-        telEl.textContent = cliente.telefone || 'Não informado';
+        nomeEl.textContent = obterNomeCliente(cliente);
+        telEl.textContent = formatarTelefone(cliente.telefone);
         cidadeEl.textContent = `${cliente.cidade || 'Cidade não informada'} - ${cliente.estado || 'UF'}`;
 
-        if (cliente.tipo === 'PJ' || cliente.cnpj) {
+        if (!ehPessoaFisica(cliente)) {
             labelDoc.textContent = 'CNPJ';
-            docEl.textContent = cliente.cnpj || 'Não informado';
+            docEl.textContent = formatarCNPJ(cliente.cnpj);
             camposPf.forEach(el => el.style.display = 'none');
         } else {
             labelDoc.textContent = 'CPF';
-            docEl.textContent = cliente.cpf || 'Não informado';
+            docEl.textContent = formatarCPF(cliente.cpf);
             nascEl.textContent = cliente.dataNascimento || 'Não informada';
             sexoEl.textContent = cliente.Sexo || cliente.sexo || 'Não informado';
             camposPf.forEach(el => el.style.display = 'block');

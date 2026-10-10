@@ -32,7 +32,10 @@ CREATE TABLE Funcionario (
     rua VARCHAR (150) NOT NULL,
     bairro VARCHAR (100),
     uf CHAR (2) NOT NULL,
-    cidade VARCHAR (100) NOT NULL
+    cidade VARCHAR (100) NOT NULL,
+    data_nascimento DATE,
+    sexo ENUM('M', 'F', 'O', 'NB', 'I', 'NE'),
+    status ENUM('Ativo', 'Inativo')
 );
 
 CREATE TABLE Pedido (
@@ -122,7 +125,8 @@ CREATE TABLE Pessoa_Juridica (
 CREATE TABLE Pessoa_Fisica (
     cpf CHAR(11) NOT NULL UNIQUE,
     sexo ENUM('M', 'F', 'O', 'NB', 'I', 'NE') NOT NULL,
-    fk_id_cliente INT UNSIGNED PRIMARY KEY
+    fk_id_cliente INT UNSIGNED PRIMARY KEY,
+    data_nascimento DATE
 );
 
 CREATE TABLE Modelo (
@@ -210,18 +214,21 @@ INSERT INTO Cliente (nome, tipo, cep, numero, rua, bairro, uf, cidade) VALUES
 ('Tudo Para Casa Ltda', 'Pessoa Jurídica', '45065000', '1800', 'Av. Juracy Magalhães', 'Felícia', 'BA', 'Vitória da Conquista'),
 ('Delta Empreiteira', 'Pessoa Jurídica', '45000000', '1900', 'Av. Luis Eduardo Magalhães', 'Candeias', 'BA', 'Vitória da Conquista');
 
+
 -- Tabela Pessoa_Fisica
-INSERT INTO Pessoa_Fisica (fk_id_cliente, cpf, sexo) VALUES
-(1, '11111111111', 'F'), 
-(2, '22222222222', 'M'), 
-(3, '33333333333', 'M'),
-(4, '44444444444', 'F'), 
-(5, '55555555555', 'F'), 
-(6, '66666666666', 'M'),
-(7, '77777777777', 'F'), 
-(8, '88888888888', 'M'), 
-(9, '99999999999', 'F'),
-(10, '10101010101', 'M');
+INSERT INTO Pessoa_Fisica
+    (fk_id_cliente, cpf, sexo, data_nascimento) VALUES
+    (1,  '11111111111', 'F',  '1995-03-12'),
+    (2,  '22222222222', 'M',  '1998-07-25'),
+    (3,  '33333333333', 'M',  '1990-11-08'),
+    (4,  '44444444444', 'F',  '2001-02-17'),
+    (5,  '55555555555', 'F',  '1997-09-30'),
+    (6,  '66666666666', 'M',  '1988-05-14'),
+    (7,  '77777777777', 'F',  '1999-12-03'),
+    (8,  '88888888888', 'M',  '1993-06-21'),
+    (9,  '99999999999', 'F',  '2000-04-19'),
+    (10, '10101010101', 'M',  '1996-08-11');
+
 
 -- Tabela Pessoa_Juridica
 INSERT INTO Pessoa_Juridica (fk_id_cliente, cnpj, razao_social) VALUES
