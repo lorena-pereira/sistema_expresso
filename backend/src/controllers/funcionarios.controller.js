@@ -185,7 +185,7 @@ export const cadastrarFuncionario = async (req, res) => {
         );
 
         if (criarAcesso) {
-            // Mantenha aqui todo o código existente que:
+            
             // Gera o hash da senha
             const senhaHash = await bcrypt.hash(dados.senha, 12);
 
