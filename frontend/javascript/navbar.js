@@ -47,24 +47,60 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-
+        
         if (btnLogout) {
-            btnLogout.addEventListener('click', () => {
-                localStorage.removeItem('usuarioLogado');
-                window.location.href = '../html/login.html';
+            btnLogout.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                btnLogout.disabled = true;
+
+                try {
+                    const resposta = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        credentials: 'same-origin'
+                    });
+
+                    if (!resposta.ok) {
+                        throw new Error('Não foi possível encerrar a sessão.');
+                    }
+
+                    localStorage.removeItem('usuarioLogado');
+
+                    window.location.replace('../html/login.html');
+                } catch (erro) {
+                    console.error('Erro ao fazer logout:', erro);
+                    alert('Não foi possível sair do sistema. Tente novamente.');
+                    btnLogout.disabled = false;
+                }
             });
         }
 
-        // 6. Preenche os dados da Sessão (Antigo sessao.js)
-        const sessaoString = localStorage.getItem('usuarioLogado');
-        if (sessaoString) {
-            const utilizador = JSON.parse(sessaoString);
-            const nomeFormatado = utilizador.nome.charAt(0).toUpperCase() + utilizador.nome.slice(1).toLowerCase();
-            const perfilFormatado = utilizador.perfil.charAt(0).toUpperCase() + utilizador.perfil.slice(1).toLowerCase();
-            
-            document.querySelector('.user-name').textContent = nomeFormatado;
-            document.querySelector('.user-role').textContent = perfilFormatado;
+
+        
+        // 6. Preenche os dados do usuário pela sessão do servidor
+        const respostaSessao = await fetch('/api/auth/sessao', {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+
+        if (respostaSessao.ok) {
+            const dadosSessao = await respostaSessao.json();
+
+            if (dadosSessao.autenticado && dadosSessao.usuario) {
+                const usuario = dadosSessao.usuario;
+
+                const nomeFormatado =
+                    usuario.login.charAt(0).toUpperCase() +
+                    usuario.login.slice(1);
+
+                document.querySelector('.user-name').textContent =
+                    nomeFormatado;
+
+                document.querySelector('.user-role').textContent =
+                    usuario.perfil;
+            }
         }
+
 
     } catch (erro) {
         console.error('Erro ao carregar a navbar:', erro);

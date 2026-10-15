@@ -1,16 +1,44 @@
-(function () {
-    // Verifica se existe o registro de login no localStorage
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
 
-    if (!usuarioLogado) {
-        // Se não estiver logado, manda para a tela de login
-        window.location.replace('../html/login.html');
+(function () {
+    const URL_LOGIN = '../html/login.html';
+
+    async function verificarSessao() {
+        try {
+            const resposta = await fetch('/api/auth/sessao', {
+                method: 'GET',
+                credentials: 'same-origin',
+                cache: 'no-store'
+            });
+
+            if (!resposta.ok) {
+                window.location.replace(URL_LOGIN);
+                return;
+            }
+
+            const dados = await resposta.json();
+
+            if (!dados.autenticado) {
+                window.location.replace(URL_LOGIN);
+                return;
+            }
+
+            // Sessão válida no servidor
+            console.log('Usuário autenticado:', dados.usuario.login);
+            console.log('Perfil:', dados.usuario.perfil);
+
+        } catch (erro) {
+            console.error('Erro ao verificar sessão:', erro);
+            window.location.replace(URL_LOGIN);
+        }
     }
 
-    // Impede a exibição da página via cache do botão "Voltar" do navegador
+    // Verifica a sessão ao abrir a página
+    verificarSessao();
+
+    // Verifica novamente ao retornar pelo botão "Voltar"
     window.addEventListener('pageshow', (event) => {
-        if (event.persisted && !localStorage.getItem('usuarioLogado')) {
-            window.location.replace('../html/login.html');
+        if (event.persisted) {
+            verificarSessao();
         }
     });
 })();

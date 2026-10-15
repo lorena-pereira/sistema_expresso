@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -160,6 +160,69 @@
                     </select>
                 </div>
             </div>
+
+            
+            <!-- Dados de acesso -->
+            <h3 class="section-title">DADOS DE ACESSO</h3>
+
+            <div class="checkbox-acesso">
+                <input
+                    type="checkbox"
+                    id="criarAcesso"
+                    name="criarAcesso"
+                    value="true"
+                    checked
+                >
+                <label for="criarAcesso">
+                    Criar usuário de acesso ao sistema
+                </label>
+            </div>
+
+            <div class="form-grid" id="campos-acesso">
+                <div class="input-group">
+                    <label for="login">
+                        Nome de usuário <span class="req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="login"
+                        name="login"
+                        maxlength="50"
+                        placeholder="Digite o nome de usuário"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="senha">
+                        Senha de acesso <span class="req">*</span>
+                    </label>
+
+                    <div class="campo-senha">
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            minlength="8"
+                            placeholder="Mínimo de 8 caracteres"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="btn-mostrar-senha"
+                            class="btn-mostrar-senha"
+                            aria-label="Mostrar senha"
+                            aria-pressed="false"
+                        >
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
 
             <button type="submit" class="btn-submit" id="btn-salvar">CADASTRAR FUNCIONÁRIO</button>
         </form>

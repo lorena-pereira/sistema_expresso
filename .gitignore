@@ -1,3 +1,16 @@
-backend/data/clientes.json
-backend/data/funcionarios.json
-backend/.env
+# Dependências Node.js
+node_modules/
+**/node_modules/
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Arquivos temporários
+.DS_Store
+Thumbs.db

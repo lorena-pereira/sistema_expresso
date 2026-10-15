@@ -35,7 +35,7 @@ CREATE TABLE Funcionario (
     cidade VARCHAR (100) NOT NULL,
     data_nascimento DATE,
     sexo ENUM('M', 'F', 'O', 'NB', 'I', 'NE'),
-    status ENUM('Ativo', 'Inativo')
+    status ENUM('Ativo', 'Inativo') NOT NULL DEFAULT 'Ativo'
 );
 
 CREATE TABLE Pedido (
@@ -133,6 +133,29 @@ CREATE TABLE Modelo (
     id_modelo INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR (30) NOT NULL,
     descricao VARCHAR (100)
+);
+
+CREATE TABLE Perfil_Acesso (
+    id_perfil INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE,
+    descricao VARCHAR(255)
+);
+
+CREATE TABLE Usuario (
+    id_usuario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL,
+    status ENUM('Ativo', 'Inativo') NOT NULL DEFAULT 'Ativo',
+    fk_id_perfil INT UNSIGNED NOT NULL,
+    fk_id_funcionario INT UNSIGNED UNIQUE,
+
+    CONSTRAINT fk_usuario_perfil
+        FOREIGN KEY (fk_id_perfil)
+        REFERENCES Perfil_Acesso(id_perfil),
+
+    CONSTRAINT fk_usuario_funcionario
+        FOREIGN KEY (fk_id_funcionario)
+        REFERENCES Funcionario(id_funcionario)
 );
  
 ALTER TABLE Pedido ADD CONSTRAINT FK_Pedido_2
@@ -401,3 +424,7 @@ INSERT INTO Troca (fk_id_pedido, fk_id_produto_venda, fk_id_produto_troca, data,
 (6, 7, 2, '2026-01-15', 100.00, 1, 850.00, 'RESSARCIDO'),
 (8, 5, 5, '2026-03-28', 0.00, 1, 1200.00, 'NENHUM'),
 (10, 9, 9, '2026-05-26', 0.00, 1, 650.00, 'NENHUM');
+
+INSERT INTO Perfil_Acesso (nome, descricao) VALUES
+    ('Administrador', 'Acesso completo às funcionalidades do sistema'),
+    ('Funcionario', 'Acesso limitado conforme as permissões do sistema');

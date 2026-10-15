@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // buscando os elementos HTML
     const loginForm = document.getElementById('login-form');
+    if (!loginForm) return;
+
     const userInput = document.getElementById('user');
     const passwordInput = document.getElementById('password');
     const togglePasswordIcon = document.querySelector('.icon-right');
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // envia a requisição para a API Node.js na porta 3000
             const response = await fetch('/login', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -48,13 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // verifica se a resposta teve sucesso
             if (response.ok && data.success) {
-                // Salva o objeto completo no localStorage
-                localStorage.setItem('usuarioLogado', JSON.stringify({
-                    nome: usuario,
-                    perfil: data.profile || 'Usuário'
-                }));
+                // A sessão já foi criada no backend.
+                // Não precisamos armazenar dados no localStorage.
 
-                // Redireciona substituindo a página no histórico
                 window.location.replace('/index.html');
             } else {
                 alert(data.message || 'Erro ao realizar login.');

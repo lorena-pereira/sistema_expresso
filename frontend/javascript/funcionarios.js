@@ -37,15 +37,50 @@ document.addEventListener('DOMContentLoaded', () => {
     let funcionarioSelecionadoParaAcao = null;
     let acaoDesejada = null;
 
+    function formatarCPF(cpf) {
+        const numeros = String(cpf || '').replace(/\D/g, '');
+
+        if (numeros.length !== 11) return cpf || '';
+
+        return numeros.replace(
+            /(\d{3})(\d{3})(\d{3})(\d{2})/,
+            '$1.$2.$3-$4'
+        );
+    }
+
+    function formatarTelefone(telefone) {
+        const numeros = String(telefone || '').replace(/\D/g, '');
+
+        if (numeros.length === 11) {
+            return numeros.replace(
+                /(\d{2})(\d{5})(\d{4})/,
+                '($1) $2-$3'
+            );
+        }
+
+        if (numeros.length === 10) {
+            return numeros.replace(
+                /(\d{2})(\d{4})(\d{4})/,
+                '($1) $2-$3'
+            );
+        }
+
+        return telefone || '';
+    }
+
     async function carregarFuncionarios() {
         try {
             const response = await fetch('/api/funcionarios');
+
             if (!response.ok) throw new Error('Erro ao buscar dados');
+
             todosFuncionarios = await response.json();
 
-            todosFuncionarios.sort((a, b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
-            
-            aplicarFiltros(); 
+            todosFuncionarios.sort((a, b) =>
+                a.nomeCompleto.localeCompare(b.nomeCompleto)
+            );
+
+            aplicarFiltros();
         } catch (error) {
             console.error(error);
         }
@@ -62,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         funcionarios.forEach(funcionario => {
             const nomeExibicao = String(funcionario.nomeCompleto || 'Funcionário sem nome');
-            const documentoExibicao = String(funcionario.cpf || 'Não informado');
+            const documentoExibicao = funcionario.cpf
+                ? formatarCPF(funcionario.cpf)
+                : 'Não informado';
             const inicial = nomeExibicao.charAt(0).toUpperCase();
             const statusTexto = String(funcionario.status || 'Ativo');
             const statusClass = statusTexto.toLowerCase() === 'ativo' ? 'ativo' : 'inativo';
@@ -149,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('detalhe-avatar').textContent = nome.charAt(0).toUpperCase();
         document.getElementById('detalhe-nome').textContent = nome;
         document.getElementById('detalhe-subtitulo').textContent = funcionario.cargo || 'Cargo não informado';
-        document.getElementById('detalhe-cpf-val').textContent = funcionario.cpf || 'Não informado';
+        document.getElementById('detalhe-cpf-val').textContent =
+            funcionario.cpf ? formatarCPF(funcionario.cpf) : 'Não informado';
         document.getElementById('detalhe-sexo-val').textContent = funcionario.sexo || 'Não informado';
         document.getElementById('detalhe-status-val').textContent = statusVal;
         document.getElementById('detalhe-badge-texto').textContent = statusVal;
@@ -157,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('detalhe-badge-status');
         if (badge) badge.className = `badge-status ${statusClass}`;
 
-        document.getElementById('detalhe-telefone-val').textContent = funcionario.telefone || 'Não informado';
+        document.getElementById('detalhe-telefone-val').textContent =
+            funcionario.telefone ? formatarTelefone(funcionario.telefone) : 'Não informado';
 
         const end = [funcionario.rua, funcionario.numero, funcionario.bairro, funcionario.cidade, funcionario.estado].filter(Boolean).join(', ');
         document.getElementById('detalhe-obs-val').textContent = end || 'Sem endereço cadastrado';
@@ -202,8 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const descricao = document.getElementById('status-descricao');
 
         document.getElementById('status-val-nome').textContent = funcionario.nomeCompleto || 'Funcionário sem nome';
-        document.getElementById('status-val-doc').textContent = funcionario.cpf || 'Não informado';
-        document.getElementById('status-val-telefone').textContent = funcionario.telefone || 'Não informado';
+        document.getElementById('status-val-doc').textContent =
+            funcionario.cpf ? formatarCPF(funcionario.cpf) : 'Não informado';
+
+        document.getElementById('status-val-telefone').textContent =
+            funcionario.telefone ? formatarTelefone(funcionario.telefone) : 'Não informado';
         document.getElementById('status-val-nascimento').textContent = funcionario.dataNascimento || 'Não informada';
         document.getElementById('status-val-sexo').textContent = funcionario.sexo || 'Não informado';
         document.getElementById('status-val-cidade').textContent = `${funcionario.cidade || 'Cidade não informada'} - ${funcionario.estado || 'UF'}`;

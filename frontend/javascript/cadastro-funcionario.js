@@ -16,6 +16,91 @@ document.addEventListener('DOMContentLoaded', () => {
     const funcionarioId = new URLSearchParams(window.location.search).get('id');
     const emEdicao = Boolean(funcionarioId);
 
+    const inputLogin = document.querySelector('input[name="login"]');
+    const inputSenha = document.querySelector('input[name="senha"]');
+
+    
+    const btnMostrarSenha = document.getElementById('btn-mostrar-senha');
+
+    if (btnMostrarSenha && inputSenha) {
+        btnMostrarSenha.addEventListener('click', () => {
+            const senhaVisivel = inputSenha.type === 'password';
+
+            inputSenha.type = senhaVisivel ? 'text' : 'password';
+
+            btnMostrarSenha.setAttribute(
+                'aria-label',
+                senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'
+            );
+
+            btnMostrarSenha.setAttribute(
+                'aria-pressed',
+                String(senhaVisivel)
+            );
+
+            const icone = btnMostrarSenha.querySelector('i, svg');
+
+            if (icone) {
+                icone.setAttribute(
+                    'data-lucide',
+                    senhaVisivel ? 'eye-off' : 'eye'
+                );
+            }
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    }
+
+
+    const checkboxCriarAcesso = document.getElementById('criarAcesso');
+    const camposAcesso = document.getElementById('campos-acesso');
+
+    function atualizarCamposAcesso() {
+        if (!checkboxCriarAcesso || !camposAcesso) return;
+
+        // Na edição, as credenciais continuam sendo gerenciadas separadamente.
+        const habilitar = !emEdicao && checkboxCriarAcesso.checked;
+
+        camposAcesso.style.display = habilitar ? '' : 'none';
+
+        if (inputLogin) {
+            inputLogin.disabled = !habilitar;
+            inputLogin.required = habilitar;
+        }
+
+        if (inputSenha) {
+            inputSenha.disabled = !habilitar;
+            inputSenha.required = habilitar;
+        }
+    }
+
+    if (checkboxCriarAcesso) {
+        checkboxCriarAcesso.addEventListener('change', atualizarCamposAcesso);
+        atualizarCamposAcesso();
+    }
+
+    if (emEdicao) {
+
+        if (checkboxCriarAcesso) {
+            checkboxCriarAcesso.checked = false;
+            checkboxCriarAcesso.disabled = true;
+        }
+
+        if (inputLogin) {
+            inputLogin.required = false;
+            inputLogin.disabled = true;
+            inputLogin.placeholder = 'Gerenciado nas configurações de acesso';
+        }
+
+        if (inputSenha) {
+            inputSenha.required = false;
+            inputSenha.disabled = true;
+            inputSenha.placeholder = 'Gerenciada nas configurações de acesso';
+        }
+    }
+
     if (emEdicao) {
         const titulo = document.querySelector('.form-card h1');
         const subtitulo = document.querySelector('.form-card .link-azul');
@@ -149,7 +234,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // preenche o formulário com os dados
             Object.entries(funcionario).forEach(([campo, valor]) => {
                 const input = form.elements.namedItem(campo);
-                if (input && typeof input.value !== 'undefined') input.value = valor ?? '';
+
+                if (!input || typeof input.value === 'undefined') return;
+
+                if (campo === 'salario' && valor !== null && valor !== '') {
+                    input.value = mascaraSalario(
+                        String(Math.round(Number(valor) * 100))
+                    );
+                } else if (campo === 'comissao' && valor !== null && valor !== '') {
+                    input.value = mascaraComissao(
+                        String(Math.round(Number(valor) * 100))
+                    );
+                } else {
+                    input.value = valor ?? '';
+                }
             });
         } catch (error) {
             console.error('Erro ao carregar funcionário:', error);
