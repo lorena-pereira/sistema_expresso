@@ -222,7 +222,7 @@ Sistema-Expresso/
 │   ├── .env.example
 │   ├── package.json
 │   └── package-lock.json
-├── public/
+├── frontend/
 │   ├── css/
 │   ├── html/
 │   └── javascript/
