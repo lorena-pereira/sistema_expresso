@@ -86,27 +86,52 @@ Esse comando instalará automaticamente as bibliotecas necessárias com base no 
 
 ### 4. Configurar as variáveis de ambiente
 
-Dentro da pasta `backend`, crie um arquivo chamado `.env`.
+Dentro da pasta `backend`, crie um arquivo chamado `.env`, utilizando o arquivo `.env.example` como referência.
 
-Você pode utilizar o arquivo `.env.example` como referência.
-
-Preencha:
+Configure as credenciais do banco de dados:
 
 ```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=SUA_SENHA_MYSQL
 DB_NAME=carpintaria
-
-SESSION_SECRET=COLOQUE_UMA_CHAVE_SECRETA_FORTE_AQUI
+SESSION_SECRET=SUA_CHAVE_SECRETA
 ```
 
-Substitua os valores de exemplo pelas configurações do seu MySQL.
+#### Como gerar o SESSION_SECRET?
 
-A variável `SESSION_SECRET` deve conter uma chave longa e aleatória, utilizada para proteger as sessões de autenticação.
+O `SESSION_SECRET` é uma chave utilizada pelo `express-session` para assinar os cookies de sessão dos usuários.
 
-**Atenção:** o arquivo `.env` contém informações sensíveis e não deve ser enviado ao GitHub.
+**Cada desenvolvedor deve gerar sua própria chave secreta.** Não é necessário solicitar essa chave a outro integrante da equipe.
 
+Para gerar uma chave segura, abra o terminal e execute:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+O comando retornará uma sequência aleatória de 64 caracteres hexadecimais, semelhante a:
+
+```text
+a4f8c2e9b73d1056f0a82c4d91e5b637...
+```
+
+Copie o resultado completo e substitua `SUA_CHAVE_SECRETA` no arquivo `.env`:
+
+```env
+SESSION_SECRET=COLE_AQUI_A_CHAVE_GERADA
+```
+
+Salve o arquivo.
+
+**Importante:**
+- Não compartilhe sua chave secreta no GitHub.
+- Nunca envie o arquivo `.env` para o repositório.
+- Utilize uma chave aleatória e diferente para cada ambiente.
+- Mantenha a mesma chave entre reinicializações do servidor para preservar a validade das assinaturas dos cookies de sessão.
+- Alterar a chave invalida os cookies de sessão assinados com a chave anterior, exigindo que os usuários façam login novamente.
+
+Após configurar o `.env`, continue para a próxima etapa de instalação.
 ### 5. Criar os usuários administradores iniciais
 
 Após configurar o banco de dados e o `.env`, execute:
