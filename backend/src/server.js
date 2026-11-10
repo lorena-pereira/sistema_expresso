@@ -7,6 +7,7 @@ import pool from '../db/db.js';
 import { login } from './controllers/auth.controller.js';
 import clientesRoutes from './routes/clientes.routes.js';
 import funcionariosRoutes from './routes/funcionarios.routes.js';
+import produtosRoutes from './routes/produtos.routes.js';
 
 const app = express();
 import path from 'path';
@@ -90,6 +91,7 @@ app.post('/api/auth/logout', (req, res) => {
 
 app.use(clientesRoutes);
 app.use(funcionariosRoutes);
+app.use(produtosRoutes);
 
 app.use(express.static(path.join(__dirname, '../../frontend')));
 

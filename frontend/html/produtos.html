@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos | Sistema Expresso</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/javascript/auth.js" defer></script>
+
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/clientes.css">
+    <link rel="stylesheet" href="/css/produtos.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="main-container produtos-pagina">
+        <div class="page-header">
+            <div class="header-title-group">
+                <a href="/html/index.html" class="btn-back-circle" aria-label="Voltar ao início">
+                    <i data-lucide="arrow-left"></i>
+                </a>
+
+                <div>
+                    <h1>Produtos</h1>
+                    <p>Produtos cadastrados na loja</p>
+                </div>
+            </div>
+
+            <a class="btn-primary" href="/html/cadastro-produto.html">
+                <i data-lucide="plus"></i>
+                Cadastrar Produto
+            </a>
+        </div>
+
+        <div
+            id="mensagem-lista-produtos"
+            class="produto-mensagem"
+            role="alert"
+            aria-live="polite"
+            hidden>
+        </div>
+
+        <!-- Busca por nome, tipo ou modelo e filtro por madeira -->
+        <div class="filter-bar produtos-filtros">
+
+            <div class="search-input-wrapper">
+                <i data-lucide="search"></i>
+
+                <input
+                    id="busca-produto"
+                    type="search"
+                    placeholder="Buscar por nome, tipo ou modelo..."
+                    aria-label="Buscar produto por nome, tipo ou modelo"
+                    autocomplete="off">
+            </div>
+
+            <div class="filter-select-wrapper produtos-filtro-madeira">
+                <i data-lucide="filter"></i>
+
+                <select
+                    id="filtro-madeira"
+                    aria-label="Filtrar produtos por madeira">
+
+                    <option value="">Todas as madeiras</option>
+                    <option value="ANGELIN">Angelin</option>
+                    <option value="CEDRO">Cedro</option>
+                    <option value="JEQUITIBÁ">Jequitibá</option>
+                    <option value="VINHÁTICO">Vinhático</option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <p
+            id="total-produtos"
+            class="produtos-total"
+            aria-live="polite">
+        </p>
+
+        <div class="table-container">
+
+            <div class="table-header produtos-tabela-linha" aria-hidden="true">
+                <div>PRODUTO</div>
+                <div>TIPO / MODELO</div>
+                <div>MADEIRA</div>
+                <div>PREÇO SUGERIDO</div>
+                <div>EM ESTOQUE</div>
+            </div>
+
+            <div id="lista-produtos-body" aria-live="polite">
+                <p class="produtos-vazio">Carregando produtos...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="/javascript/navbar.js"></script>
+    <script src="/javascript/produtos.js" defer></script>
+
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>

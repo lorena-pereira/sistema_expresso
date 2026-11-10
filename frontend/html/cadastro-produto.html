@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Produto | Sistema Expresso</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/javascript/auth.js" defer></script>
+
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/cadastros.css">
+    <link rel="stylesheet" href="/css/produtos.css">
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <main class="main-container">
+        <section class="form-card">
+            <a href="/html/produtos.html" class="btn-voltar">
+                <i data-lucide="arrow-left"></i>
+                Voltar para Produtos
+            </a>
+
+            <h1>Cadastrar Produto</h1>
+            <p class="subtitle">
+                Gerenciar Produto <span class="separator">•</span>
+                <span class="subtitle-info">Cadastro de produtos</span>
+            </p>
+
+            <form id="formCadastroProduto" novalidate>
+                <h3 class="section-title">DADOS DO PRODUTO</h3>
+
+                <div class="form-grid">
+                    <div class="input-group full-width">
+                        <label for="nome">Nome do produto <span class="req">*</span></label>
+                        <input id="nome" name="nome" type="text" maxlength="100" placeholder="Ex.: Porta de Quarto Lisa"
+                            autocomplete="off" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tipo">Tipo <span class="req">*</span></label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="PORTA">Porta</option>
+                            <option value="JANELA">Janela</option>
+                            <option value="MESA">Mesa</option>
+                            <option value="CADEIRA">Cadeira</option>
+                            <option value="VENEZIANA">Veneziana</option>
+                            <option value="MESA DE SINUCA">Mesa de sinuca</option>
+                            <option value="MESA DE PEBOLIM">Mesa de pebolim</option>
+                            <option value="SOFÁ">Sofá</option>
+                            <option value="DERIVADOS">Derivados</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="modeloId">Modelo <span class="req">*</span></label>
+                        <select id="modeloId" name="modeloId" required disabled>
+                            <option value="">Carregando modelos...</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="madeira">Madeira <span class="req">*</span></label>
+                        <select id="madeira" name="madeira" required>
+                            <option value="">Selecione a madeira</option>
+                            <option value="ANGELIN">Angelin</option>
+                            <option value="CEDRO">Cedro</option>
+                            <option value="JEQUITIBÁ">Jequitibá</option>
+                            <option value="VINHÁTICO">Vinhático</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="medida">Unidade de medida <span class="req">*</span></label>
+                        <select id="medida" name="medida" required>
+                            <option value="">Selecione a unidade</option>
+                            <option value="UNIDADE">Unidade</option>
+                            <option value="METROS">Metros</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="custoMedida">Custo (R$) <span class="req">*</span></label>
+                        <input id="custoMedida" name="custoMedida" type="text" inputmode="decimal" maxlength="12"
+                            placeholder="Ex.: 150,00" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="precoSugerido">Preço sugerido (R$) <span class="req">*</span></label>
+                        <input id="precoSugerido" name="precoSugerido" type="text" inputmode="decimal" maxlength="12"
+                            placeholder="Ex.: 300,00" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="quantidade">Quantidade em estoque <span class="req">*</span></label>
+                        <input id="quantidade" name="quantidade" type="number" min="0" max="4294967295" step="1"
+                            placeholder="Ex.: 20" required>
+                    </div>
+                </div>
+
+                <button id="btn-cadastrar-produto" type="submit" class="btn-submit">
+                    CADASTRAR PRODUTO
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Toast de Sucesso -->
+    <div id="toast-sucess" class="toast-notification">
+        <i data-lucide="check-circle"></i>
+        <span>Operação realizada com sucesso!</span>
+    </div>
+
+    <script src="/javascript/navbar.js"></script>
+    <script src="/javascript/cadastro-produto.js" defer></script>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+
+</html>

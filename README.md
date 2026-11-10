@@ -245,3 +245,37 @@ Sistema-Expresso/
 **Em desenvolvimento.**
 
 Funcionalidades já implementadas incluem cadastro e gerenciamento de clientes e funcionários, autenticação por sessões, controle de permissões nas APIs e criação opcional de contas de acesso para funcionários.
+
+## Sprint 2 — RF021: Cadastrar Produto
+
+O módulo **Produtos e Estoque** agora abre uma listagem paginada básica, com acesso ao formulário **Cadastrar Produto**. O formulário implementa o RF021 (páginas 35 e 36 do Documento de Especificação de Requisitos): Tipo, Modelo, Madeira, Custo, Preço Sugerido e Quantidade em Estoque são obrigatórios.
+
+A estrutura atual da tabela `Produto` também define `nome` e `medida` como `NOT NULL`. Por isso, o formulário solicita adicionalmente **Nome do produto** e **Unidade de medida** para que o cadastro seja compatível com o banco existente.
+
+### Rotas adicionadas
+
+- `GET /api/modelos-produto`: carrega os modelos cadastrados para o campo Modelo.
+- `GET /api/produtos?pagina=1`: apresenta a listagem básica de produtos em páginas de 10 registros.
+- `POST /api/produtos`: valida os dados e cadastra o produto no MySQL.
+
+As rotas exigem sessão autenticada e permitem os perfis `Administrador` e `Funcionario`, conforme os perfis já utilizados pelo projeto.
+
+### Preparação do banco de dados
+
+A funcionalidade utiliza as tabelas `Produto` e `Modelo` já presentes no `backend/schema.sql`. É necessário que a tabela `Modelo` contenha registros para preencher o seletor de modelos.
+
+Foi incluída a migração opcional `backend/migrations/2026-11-10-produto-unico.sql`, que cria uma restrição para impedir duplicidade de produto com o mesmo nome, tipo, madeira e modelo. Execute-a **uma única vez** no banco `carpintaria`, depois de verificar que a consulta inicial do arquivo não retorna duplicidades. A rotina da API também verifica duplicidade antes da inserção.
+
+**Atenção:** o `backend/schema.sql` começa com `DROP DATABASE IF EXISTS carpintaria`. Não execute esse arquivo sobre um banco que contenha dados que devam ser preservados.
+
+### Testes
+
+Na pasta `backend`, execute:
+
+```bash
+npm test
+```
+
+Os testes automatizados validam regras de entrada e controladores usando um banco simulado, sem exigir conexão MySQL. A gravação real deve ser conferida localmente com o banco configurado no arquivo `backend/.env`.
+
+Busca, detalhes, edição e ativação/desativação de produtos não fazem parte desta implementação e permanecem para as respectivas tarefas da Sprint 2.

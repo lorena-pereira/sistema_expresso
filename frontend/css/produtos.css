@@ -1,0 +1,150 @@
+.produtos-pagina {
+    display: block;
+    width: 100%;
+    max-width: 1170px;
+    margin: 0 auto;
+}
+
+/* busca e filtros */
+.produtos-filtros {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 20px 0 18px;
+    flex-wrap: wrap;
+}
+
+.produtos-filtros .search-input-wrapper {
+    flex: 1;
+    min-width: 260px;
+}
+
+.produtos-filtro-madeira {
+    width: 240px;
+    flex-shrink: 0;
+}
+
+.produtos-total {
+    margin: 0 0 12px;
+    color: #64748B;
+    font-size: 13px;
+}
+
+
+/* mensagem */
+.produto-mensagem {
+    margin: 18px 0;
+    padding: 13px 15px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.produto-mensagem[hidden] {
+    display: none;
+}
+
+.produto-mensagem.erro {
+    color: #991B1B;
+    background: #FEE2E2;
+    border: 1px solid #FECACA;
+}
+
+.produto-mensagem.sucesso {
+    color: #166534;
+    background: #DCFCE7;
+    border: 1px solid #BBF7D0;
+}
+
+/* formulário */
+.form-card .input-group input:focus,
+.form-card .input-group select:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+}
+
+.form-card .input-group select:disabled {
+    background: #F1F5F9;
+    cursor: not-allowed;
+}
+
+.form-card .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* tabela */
+.produtos-tabela-linha {
+    grid-template-columns: 2fr 1.4fr 1fr 1.2fr 1fr;
+    gap: 16px;
+    min-width: 850px;
+}
+
+.produtos-tabela-linha > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.produtos-tabela-linha.table-row {
+    font-size: 14px;
+}
+
+.produtos-tabela-linha .produto-nome {
+    color: #0F172A;
+    font-weight: 700;
+}
+
+.produtos-tabela-linha .produto-tipo {
+    color: #475569;
+}
+
+.produtos-tabela-linha .produto-modelo {
+    display: block;
+    padding-top: 4px;
+    color: #64748B;
+    font-size: 12px;
+}
+
+.produtos-vazio {
+    padding: 26px;
+    color: #64748B;
+    text-align: center;
+}
+
+/* responsividade */
+@media (max-width: 650px) {
+
+    .form-card {
+        padding: 24px 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .produtos-pagina .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .produtos-filtros {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .produtos-filtros .search-input-wrapper {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .produtos-filtro-madeira {
+        width: 100%;
+    }
+
+}
