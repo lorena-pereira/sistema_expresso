@@ -4,5 +4,8 @@ import { criarHandlersProdutos } from './produtos.handlers.js';
 export const {
     listarModelosProduto,
     cadastrarProduto,
-    listarProdutos
+    listarProdutos,
+    obterProduto,
+    editarProduto,
+    alterarStatusProduto
 } = criarHandlersProdutos(pool);

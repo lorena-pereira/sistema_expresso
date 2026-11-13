@@ -31,7 +31,6 @@
     font-size: 13px;
 }
 
-
 /* mensagem */
 .produto-mensagem {
     margin: 18px 0;
@@ -77,9 +76,8 @@
 
 /* tabela */
 .produtos-tabela-linha {
-    grid-template-columns: 2fr 1.4fr 1fr 1.2fr 1fr;
-    gap: 16px;
-    min-width: 850px;
+    grid-template-columns: 1.7fr 1.4fr .9fr 1.1fr .8fr .8fr .35fr;
+    min-width: 1100px;
 }
 
 .produtos-tabela-linha > div {
@@ -111,6 +109,85 @@
     padding: 26px;
     color: #64748B;
     text-align: center;
+}
+
+/* modal de ativação e desativação de produtos */
+#modal-confirmar-produto .status-cliente-card strong {
+    display: block;
+    color: #0F172A;
+    font-size: 15px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+#modal-confirmar-produto .status-grid-dados > div {
+    min-width: 0;
+}
+
+#modal-confirmar-produto [hidden] {
+    display: none !important;
+}
+
+#modal-confirmar-produto .status-header-aviso svg {
+    width: 22px;
+    height: 22px;
+}
+
+#modal-confirmar-produto button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* toasts */
+.produto-toast {
+    position: fixed;
+    top: 92px;
+    right: 20px;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 24px;
+    border-radius: 8px;
+
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(120%);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        visibility 0.3s ease;
+
+    pointer-events: none;
+}
+
+.produto-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.produto-toast.sucesso {
+    background-color: #16A34A;
+}
+
+.produto-toast.erro {
+    background-color: #DC2626;
+}
+
+.produto-toast svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
 }
 
 /* responsividade */

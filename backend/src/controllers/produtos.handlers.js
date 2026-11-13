@@ -3,6 +3,18 @@ import {
     validarProduto
 } from '../validators/produtos.validator.js';
 
+const validarId = valor => {
+    const texto = String(valor ?? '');
+
+    if (!/^[1-9]\d*$/.test(texto)) return null;
+
+    const numero = Number(texto);
+
+    return Number.isSafeInteger(numero) && numero <= 4294967295
+        ? numero
+        : null;
+};
+
 export function criarHandlersProdutos(pool) {
     async function listarModelosProduto(req, res) {
         try {
@@ -123,8 +135,7 @@ export function criarHandlersProdutos(pool) {
         }
     }
 
-    // Busca por nome, tipo ou modelo e filtro por madeira.
-    // Todos os produtos são retornados sem paginação.
+    // busca por nome, tipo ou modelo e filtro por madeira
     async function listarProdutos(req, res) {
         const busca = typeof req.query?.busca === 'string'
             ? req.query.busca.trim()
@@ -151,7 +162,7 @@ export function criarHandlersProdutos(pool) {
         const condicoes = [];
         const parametros = [];
 
-        // Pesquisa simultaneamente por nome, tipo e modelo.
+        // pesquisa simultaneamente por nome, tipo e modelo
         if (busca) {
             const termo = `%${busca}%`;
 
@@ -164,7 +175,7 @@ export function criarHandlersProdutos(pool) {
             parametros.push(termo, termo, termo);
         }
 
-        // Aplica o filtro de madeira quando selecionado.
+        // aplica o filtro de madeira quando selecionado
         if (madeira) {
             condicoes.push('p.madeira = ?');
             parametros.push(madeira);
@@ -185,12 +196,13 @@ export function criarHandlersProdutos(pool) {
                     p.preco_sugerido AS precoSugerido,
                     p.quantidade,
                     p.medida,
+                    p.status,
                     m.nome AS modelo
                  FROM Produto p
                  LEFT JOIN Modelo m
                     ON m.id_modelo = p.fk_id_modelo
                  ${where}
-                 ORDER BY p.id_produto DESC`,
+                 ORDER BY p.nome ASC, p.id_produto ASC`,
                 parametros
             );
 
@@ -210,9 +222,272 @@ export function criarHandlersProdutos(pool) {
         }
     }
 
+    async function obterProduto(req, res) {
+        const id = validarId(req.params.id);
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID do produto inválido.'
+            });
+        }
+
+        try {
+            const [linhas] = await pool.execute(
+                `SELECT
+                p.id_produto AS id,
+                p.nome,
+                p.tipo,
+                p.madeira,
+                p.custo_medida AS custoMedida,
+                p.preco_sugerido AS precoSugerido,
+                p.quantidade,
+                p.medida,
+                p.status,
+                p.fk_id_modelo AS modeloId,
+                m.nome AS modelo
+             FROM Produto p
+             LEFT JOIN Modelo m
+                ON m.id_modelo = p.fk_id_modelo
+             WHERE p.id_produto = ?
+             LIMIT 1`,
+                [id]
+            );
+
+            if (!linhas.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Produto não encontrado.'
+                });
+            }
+
+            return res.json({
+                success: true,
+                produto: linhas[0]
+            });
+
+        } catch (erro) {
+            console.error('Erro ao obter produto:', erro);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Não foi possível carregar o produto.'
+            });
+        }
+    }
+
+    // atualiza os dados de um produto existente.
+    async function editarProduto(req, res) {
+        const id = validarId(req.params.id);
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID do produto inválido.'
+            });
+        }
+
+        const validacao = validarProduto(req.body);
+
+        if (validacao.erro) {
+            return res.status(400).json({
+                success: false,
+                message: validacao.erro
+            });
+        }
+
+        const p = validacao.dados;
+
+        try {
+            // Verificar se o produto existe.
+            const [atuais] = await pool.execute(
+                'SELECT id_produto FROM Produto WHERE id_produto = ? LIMIT 1',
+                [id]
+            );
+
+            if (!atuais.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Produto não encontrado.'
+                });
+            }
+
+            // Verificar modelo.
+            const [modelos] = await pool.execute(
+                'SELECT id_modelo FROM Modelo WHERE id_modelo = ? LIMIT 1',
+                [p.modeloId]
+            );
+
+            if (!modelos.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Selecione um modelo válido.'
+                });
+            }
+
+            // Ignorar o próprio produto ao verificar duplicidade.
+            const [repetidos] = await pool.execute(
+                `SELECT id_produto
+             FROM Produto
+             WHERE LOWER(TRIM(nome)) = LOWER(?)
+               AND tipo = ?
+               AND madeira = ?
+               AND fk_id_modelo = ?
+               AND id_produto <> ?
+             LIMIT 1`,
+                [
+                    p.nome,
+                    p.tipo,
+                    p.madeira,
+                    p.modeloId,
+                    id
+                ]
+            );
+
+            if (repetidos.length) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Já existe outro produto com esses dados!'
+                });
+            }
+
+            // Salvar alterações.
+            const [resultado] = await pool.execute(
+                `UPDATE Produto
+             SET
+                nome = ?,
+                tipo = ?,
+                custo_medida = ?,
+                preco_sugerido = ?,
+                madeira = ?,
+                quantidade = ?,
+                medida = ?,
+                fk_id_modelo = ?
+             WHERE id_produto = ?`,
+                [
+                    p.nome,
+                    p.tipo,
+                    p.custo,
+                    p.preco,
+                    p.madeira,
+                    p.quantidade,
+                    p.medida,
+                    p.modeloId,
+                    id
+                ]
+            );
+
+            if (!resultado.affectedRows) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Produto não encontrado.'
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: 'Produto atualizado com sucesso!'
+            });
+
+        } catch (erro) {
+            console.error('Erro ao editar produto:', erro);
+
+            if (erro.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Já existe outro produto com esses dados!'
+                });
+            }
+
+            if (erro.code === 'ER_NO_REFERENCED_ROW_2') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Modelo inexistente.'
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: 'Não foi possível atualizar o produto.'
+            });
+        }
+    }
+
+    async function alterarStatusProduto(req, res) {
+        const id = validarId(req.params.id);
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID do produto inválido.'
+            });
+        }
+
+        const status = req.body?.status;
+
+        if (!['Ativo', 'Inativo'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Status inválido.'
+            });
+        }
+
+        try {
+            const [resultado] = await pool.execute(
+                `UPDATE Produto
+             SET status = ?
+             WHERE id_produto = ?
+               AND status <> ?`,
+                [status, id, status]
+            );
+
+            if (!resultado.affectedRows) {
+                const [linhas] = await pool.execute(
+                    `SELECT status
+                 FROM Produto
+                 WHERE id_produto = ?
+                 LIMIT 1`,
+                    [id]
+                );
+
+                if (!linhas.length) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Produto não encontrado.'
+                    });
+                }
+
+                return res.status(409).json({
+                    success: false,
+                    message: status === 'Ativo'
+                        ? 'Produto já ativo!'
+                        : 'Produto já desativado!'
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: status === 'Ativo'
+                    ? 'Produto ativado com sucesso!'
+                    : 'Produto desativado com sucesso!'
+            });
+
+        } catch (erro) {
+            console.error('Erro ao mudar status do produto:', erro);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Não foi possível alterar o status do produto.'
+            });
+        }
+    }
+
     return {
         listarModelosProduto,
         cadastrarProduto,
-        listarProdutos
+        listarProdutos,
+        obterProduto,
+        editarProduto,
+        alterarStatusProduto
     };
-}
+};

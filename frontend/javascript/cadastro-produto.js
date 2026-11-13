@@ -1,167 +1,199 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formCadastroProduto');
-    const seletorModelos = document.getElementById('modeloId');
+    const modelos = document.getElementById('modeloId');
     const botao = document.getElementById('btn-cadastrar-produto');
     const toast = document.getElementById('toast-sucess');
 
-    if (!form || !seletorModelos || !botao || !toast) {
-        return;
-    }
+    if (!form || !modelos || !botao || !toast) return;
 
-    let toastTimeout;
+    const parametroId = new URLSearchParams(
+        location.search
+    ).get('id');
 
-    // toast
-    function mostrarToast(mensagem, tipo = 'sucesso') {
-        const texto = toast.querySelector('span');
+    const editando = parametroId !== null;
 
-        if (texto) {
-            texto.textContent = mensagem;
+    const idValido =
+        /^[1-9]\d*$/.test(parametroId ?? '') &&
+        Number.isSafeInteger(Number(parametroId)) &&
+        Number(parametroId) <= 4294967295;
+
+    const textoBotao = editando
+        ? 'SALVAR ALTERAÇÕES'
+        : 'CADASTRAR PRODUTO';
+
+    let temporizador;
+
+    // adaptar a interface ao modo edição
+    if (editando) {
+        document.title = 'Editar Produto | Sistema Expresso';
+
+        const titulo = document.querySelector('.form-card h1');
+        const subtitulo = document.querySelector('.subtitle-info');
+
+        if (titulo) {
+            titulo.textContent = 'Editar Produto';
         }
 
-        const iconeAtual = toast.querySelector('i, svg');
+        if (subtitulo) {
+            subtitulo.textContent = 'Edição de produtos';
+        }
+    }
 
-        if (iconeAtual) {
-            const novoIcone = document.createElement('i');
+    // toast igual ao de Cliente e Funcionário
+    function mostrarToast(mensagem, erro = false) {
+        toast.querySelector('span').textContent = mensagem;
 
-            novoIcone.setAttribute(
-                'data-lucide',
-                tipo === 'erro'
-                    ? 'alert-circle'
-                    : 'check-circle'
-            );
+        const antigo = toast.querySelector('i, svg');
 
-            iconeAtual.replaceWith(novoIcone);
+        if (antigo) {
+            const novo = document.createElement('i');
+
+            novo.dataset.lucide = erro
+                ? 'alert-circle'
+                : 'check-circle';
+
+            antigo.replaceWith(novo);
 
             if (window.lucide) {
                 lucide.createIcons();
             }
         }
 
-        toast.style.backgroundColor =
-            tipo === 'erro' ? '#DC2626' : '#16A34A';
+        toast.style.backgroundColor = erro
+            ? '#DC2626'
+            : '#16A34A';
 
         toast.classList.add('show');
 
-        clearTimeout(toastTimeout);
+        clearTimeout(temporizador);
 
-        toastTimeout = setTimeout(() => {
+        temporizador = setTimeout(() => {
             toast.classList.remove('show');
         }, 3500);
     }
 
-    // carregar modelos do banco de dados
+    // carregar modelos
     async function carregarModelos() {
-        seletorModelos.disabled = true;
+        modelos.disabled = true;
 
-        try {
-            const resposta = await fetch('/api/modelos-produto', {
-                method: 'GET',
-                credentials: 'same-origin',
-                cache: 'no-store'
-            });
+        const resposta = await fetch('/api/modelos-produto', {
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
 
-            const dados = await resposta.json();
-
-            if (
-                !resposta.ok ||
-                !dados.success ||
-                !Array.isArray(dados.modelos)
-            ) {
-                throw new Error(
-                    dados.message || 'Não foi possível carregar os modelos.'
-                );
-            }
-
-            seletorModelos.replaceChildren();
-
-            const opcaoInicial = document.createElement('option');
-
-            opcaoInicial.value = '';
-            opcaoInicial.textContent = 'Selecione o modelo';
-
-            seletorModelos.append(opcaoInicial);
-
-            for (const modelo of dados.modelos) {
-                const opcao = document.createElement('option');
-
-                opcao.value = String(modelo.id);
-                opcao.textContent = modelo.nome;
-
-                seletorModelos.append(opcao);
-
-            }
-
-            if (dados.modelos.length === 0) {
-                opcaoInicial.textContent = 'Nenhum modelo cadastrado';
-
-                mostrarToast(
-                    'Não há modelos cadastrados. Cadastre um modelo antes de cadastrar produtos.',
-                    'erro'
-                );
-
-                return;
-            }
-
-            seletorModelos.disabled = false;
-
-        } catch (erro) {
-            console.error('Erro ao carregar modelos:', erro);
-
-            seletorModelos.replaceChildren();
-
-            const opcaoErro = document.createElement('option');
-
-            opcaoErro.value = '';
-            opcaoErro.textContent = 'Erro ao carregar modelos';
-
-            seletorModelos.append(opcaoErro);
-
-            mostrarToast(
-                erro.message || 'Não foi possível carregar os modelos.',
-                'erro'
-            );
-
-        }
-
-    }
-
-    // validação de moeda
-    function moedaValida(valor, limite = 99999.99) {
-        const texto = String(valor).trim();
-
-        const formatoBrasilComMilhar =
-            /^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(texto);
-
-        const formatoBrasil =
-            /^\d+(?:,\d{1,2})?$/.test(texto);
-
-        const formatoDecimal =
-            /^\d+(?:\.\d{1,2})?$/.test(texto);
+        const dados = await resposta.json();
 
         if (
-            !formatoBrasilComMilhar &&
-            !formatoBrasil &&
-            !formatoDecimal
+            !resposta.ok ||
+            !dados.success ||
+            !Array.isArray(dados.modelos)
         ) {
+            throw new Error(
+                dados.message ||
+                'Não foi possível carregar os modelos.'
+            );
+        }
+
+        modelos.replaceChildren(
+            new Option('Selecione o modelo', '')
+        );
+
+        for (const modelo of dados.modelos) {
+            modelos.add(
+                new Option(
+                    modelo.nome,
+                    String(modelo.id)
+                )
+            );
+        }
+
+        if (!dados.modelos.length) {
+            throw new Error('Nenhum modelo cadastrado.');
+        }
+
+        modelos.disabled = false;
+    }
+
+    // recuperar dados do produto selecionado
+    async function carregarProduto(id) {
+        const resposta = await fetch(
+            `/api/produtos/${id}`,
+            {
+                credentials: 'same-origin',
+                cache: 'no-store'
+            }
+        );
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok || !dados.success) {
+            throw new Error(
+                dados.message || 'Produto não encontrado.'
+            );
+        }
+
+        const p = dados.produto;
+
+        const campos = {
+            nome: p.nome,
+            tipo: p.tipo,
+            modeloId: p.modeloId,
+            madeira: p.madeira,
+            medida: p.medida,
+            custoMedida: p.custoMedida,
+            precoSugerido: p.precoSugerido,
+            quantidade: p.quantidade
+        };
+
+        // preencher formulário
+        for (const [nome, valor] of Object.entries(campos)) {
+            const campo = form.elements.namedItem(nome);
+
+            if (campo) {
+                campo.value = String(valor ?? '');
+            }
+        }
+
+        if (!modelos.value) {
+            throw new Error(
+                'O modelo cadastrado não está disponível.'
+            );
+        }
+    }
+
+    // validação monetária
+    function moedaValida(valor) {
+        const texto = String(valor).trim();
+
+        const milharBR =
+            /^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(texto);
+
+        const decimalBR =
+            /^\d+(?:,\d{1,2})?$/.test(texto);
+
+        const decimalPonto =
+            /^\d+(?:\.\d{1,2})?$/.test(texto);
+
+        if (!milharBR && !decimalBR && !decimalPonto) {
             return false;
         }
 
-        const normalizado =
-            formatoBrasilComMilhar || formatoBrasil
-                ? texto.replace(/\./g, '').replace(',', '.')
-                : texto;
+        const convertido = milharBR || decimalBR
+            ? texto.replace(/\./g, '').replace(',', '.')
+            : texto;
 
-        const numero = Number(normalizado);
+        const numero = Number(convertido);
 
         return Number.isFinite(numero) &&
             numero >= 0 &&
-            numero <= limite;
-
+            numero <= 99999.99;
     }
 
-    // cadastro do produto
+    // cadastrar ou editar
     form.addEventListener('submit', async evento => {
         evento.preventDefault();
+
+        if (botao.disabled) return;
 
         const dados = Object.fromEntries(
             new FormData(form)
@@ -171,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .trim()
             .replace(/\s+/g, ' ');
 
-        const camposObrigatorios = [
+        const obrigatorios = [
             'nome',
             'tipo',
             'modeloId',
@@ -182,100 +214,120 @@ document.addEventListener('DOMContentLoaded', () => {
             'medida'
         ];
 
-        if (
-            camposObrigatorios.some(
-                campo => String(dados[campo] ?? '').trim() === ''
-            )
-        ) {
-            mostrarToast(
+        if (obrigatorios.some(campo => String(dados[campo] ?? '').trim() === '')) {
+            return mostrarToast(
                 'Preencha todos os campos obrigatórios!',
-                'erro'
+                true
             );
-
-            return;
         }
 
-        if (dados.nome.length > 100) {
-            mostrarToast(
-                'Nome do produto inválido (máximo de 100 caracteres).',
-                'erro'
+        if (!dados.nome || dados.nome.length > 100) {
+            return mostrarToast(
+                'Nome do produto inválido.',
+                true
             );
-            return;
         }
 
-        if (
-            !/^\d+$/.test(dados.quantidade) ||
-            Number(dados.quantidade) > 4294967295
-        ) {
-            mostrarToast(
+        if (!moedaValida(dados.custoMedida) || !moedaValida(dados.precoSugerido)) {
+            return mostrarToast('Preço inválido!', true);
+        }
+
+        if (!/^\d+$/.test(dados.quantidade) || Number(dados.quantidade) > 4294967295) {
+            return mostrarToast(
                 'Quantidade em estoque inválida.',
-                'erro'
+                true
             );
-
-            return;
-        }
-
-        if (
-            !moedaValida(dados.custoMedida) ||
-            !moedaValida(dados.precoSugerido)
-        ) {
-            mostrarToast(
-                'Preço inválido!',
-                'erro'
-            );
-
-            return;
         }
 
         botao.disabled = true;
-        botao.textContent = 'CADASTRANDO...';
+
+        botao.textContent = editando
+            ? 'SALVANDO...'
+            : 'CADASTRANDO...';
+
+        let redirecionando = false;
 
         try {
-            const resposta = await fetch('/api/produtos', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dados)
-            });
+            // modo cadastro: POST
+            // modo edição: PUT
+            const resposta = await fetch(
+                editando
+                    ? `/api/produtos/${parametroId}`
+                    : '/api/produtos',
+                {
+                    method: editando ? 'PUT' : 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                }
+            );
 
             const resultado = await resposta.json();
 
             if (!resposta.ok || !resultado.success) {
-                mostrarToast(
+                throw new Error(
                     resultado.message ||
-                    'Não foi possível cadastrar o produto.',
-                    'erro'
+                    'Não foi possível salvar.'
                 );
-
-                return;
             }
 
-            form.reset();
-
             mostrarToast(
-                resultado.message ||
-                'Operação realizada com sucesso!',
-                'sucesso'
+                editando
+                    ? 'Produto atualizado com sucesso!'
+                    : 'Produto cadastrado com sucesso!'
             );
 
-            form.elements.namedItem('nome').focus();
+            botao.disabled = true;
+            botao.textContent = 'REDIRECIONANDO...';
 
+            redirecionando = true;
+
+            setTimeout(() => {
+                window.location.href = '/html/produtos.html';
+            }, 1200);
         } catch (erro) {
-            console.error('Erro ao cadastrar produto:', erro);
+            console.error('Erro ao salvar produto:', erro);
 
             mostrarToast(
-                'Erro de conexão com o servidor. Tente novamente.',
-                'erro'
+                erro.message || 'Falha de conexão.',
+                true
             );
-
         } finally {
-            botao.disabled = false;
-            botao.textContent = 'CADASTRAR PRODUTO';
+            if (!redirecionando) {
+                botao.disabled = false;
+                botao.textContent = textoBotao;
+            }
         }
-
     });
 
-    carregarModelos();
+    // inicializar formulário
+    (async () => {
+        botao.disabled = true;
+        botao.textContent = 'CARREGANDO...';
+
+        try {
+            if (editando && !idValido) {
+                throw new Error('ID do produto inválido.');
+            }
+
+            await carregarModelos();
+
+            if (editando) {
+                await carregarProduto(parametroId);
+            }
+
+            botao.disabled = false;
+            botao.textContent = textoBotao;
+        } catch (erro) {
+            console.error(
+                'Falha ao inicializar formulário:',
+                erro
+            );
+
+            mostrarToast(erro.message, true);
+            botao.textContent = 'INDISPONÍVEL';
+        }
+    })();
 });

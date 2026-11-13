@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produtos | Sistema Expresso</title>
-
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/javascript/auth.js" defer></script>
-
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/clientes.css">
     <link rel="stylesheet" href="/css/produtos.css">
 </head>
+
 <body>
     <div id="navbar-container"></div>
-
     <main class="main-container produtos-pagina">
         <div class="page-header">
             <div class="header-title-group">
                 <a href="/html/index.html" class="btn-back-circle" aria-label="Voltar ao início">
                     <i data-lucide="arrow-left"></i>
                 </a>
-
                 <div>
                     <h1>Produtos</h1>
                     <p>Produtos cadastrados na loja</p>
@@ -31,78 +29,243 @@
 
             <a class="btn-primary" href="/html/cadastro-produto.html">
                 <i data-lucide="plus"></i>
-                Cadastrar Produto
+                Cadastrar
             </a>
         </div>
 
-        <div
-            id="mensagem-lista-produtos"
-            class="produto-mensagem"
-            role="alert"
-            aria-live="polite"
-            hidden>
-        </div>
+        <!-- Mensagem de erro da listagem -->
+        <div id="mensagem-lista-produtos" class="produto-mensagem" role="alert" hidden></div>
 
-        <!-- Busca por nome, tipo ou modelo e filtro por madeira -->
+        <!-- Busca e filtro -->
         <div class="filter-bar produtos-filtros">
-
             <div class="search-input-wrapper">
                 <i data-lucide="search"></i>
-
-                <input
-                    id="busca-produto"
-                    type="search"
-                    placeholder="Buscar por nome, tipo ou modelo..."
-                    aria-label="Buscar produto por nome, tipo ou modelo"
-                    autocomplete="off">
+                <input id="busca-produto" type="search" placeholder="Buscar por nome, tipo ou modelo..."
+                    aria-label="Buscar produto">
             </div>
 
             <div class="filter-select-wrapper produtos-filtro-madeira">
                 <i data-lucide="filter"></i>
-
-                <select
-                    id="filtro-madeira"
-                    aria-label="Filtrar produtos por madeira">
-
+                <select id="filtro-madeira" aria-label="Filtrar por madeira">
                     <option value="">Todas as madeiras</option>
                     <option value="ANGELIN">Angelin</option>
                     <option value="CEDRO">Cedro</option>
                     <option value="JEQUITIBÁ">Jequitibá</option>
                     <option value="VINHÁTICO">Vinhático</option>
-
                 </select>
             </div>
-
         </div>
 
-        <p
-            id="total-produtos"
-            class="produtos-total"
-            aria-live="polite">
-        </p>
+        <p id="total-produtos" class="produtos-total" aria-live="polite"></p>
 
+        <!-- Listagem -->
         <div class="table-container">
-
             <div class="table-header produtos-tabela-linha" aria-hidden="true">
                 <div>PRODUTO</div>
                 <div>TIPO / MODELO</div>
                 <div>MADEIRA</div>
                 <div>PREÇO SUGERIDO</div>
-                <div>EM ESTOQUE</div>
+                <div>STATUS</div>
+                <div>AÇÕES</div>
             </div>
-
             <div id="lista-produtos-body" aria-live="polite">
-                <p class="produtos-vazio">Carregando produtos...</p>
+                Carregando produtos...
             </div>
-
         </div>
     </main>
 
+    <!-- MODAL DETALHES DO PRODUTO -->
+    <div class="modal-overlay" id="modal-detalhes-produto" role="dialog" aria-modal="true"
+        aria-labelledby="titulo-detalhes-produto" aria-hidden="true">
+        <div class="modal-card modal-detalhes">
+            <button type="button" class="modal-close" id="fechar-detalhes-produto" aria-label="Fechar detalhes">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header-detalhes">
+                <h2 id="titulo-detalhes-produto">
+                    Detalhes do produto
+                </h2>
+                <p>Visualize as informações e gerencie este produto.</p>
+            </div>
+
+            <!-- Identificação e status -->
+            <div class="cliente-profile-header">
+                <div class="avatar-circle-lg">
+                    <i data-lucide="package"></i>
+                </div>
+
+                <div class="profile-info">
+                    <div class="profile-title-group">
+                        <h3 id="detalhe-produto-nome">—</h3>
+                        <span class="badge-status ativo" id="detalhe-produto-badge">
+                            <span class="badge-dot"></span>
+                            <span id="detalhe-produto-status">Ativo</span>
+                        </span>
+                    </div>
+
+                    <p id="detalhe-produto-subtitulo">—</p>
+                </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="info-section">
+                <span class="section-label">INFORMAÇÕES</span>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <span class="info-label">TIPO</span>
+                        <strong class="info-value" id="detalhe-tipo">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">MODELO</span>
+                        <strong class="info-value" id="detalhe-modelo">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">MADEIRA</span>
+                        <strong class="info-value" id="detalhe-madeira">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">UNIDADE DE MEDIDA</span>
+                        <strong class="info-value" id="detalhe-medida">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">CUSTO</span>
+                        <strong class="info-value" id="detalhe-custo">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">PREÇO SUGERIDO</span>
+                        <strong class="info-value" id="detalhe-preco">—</strong>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-label">QUANTIDADE EM ESTOQUE</span>
+                        <strong class="info-value" id="detalhe-quantidade">—</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações do produto -->
+            <div class="action-section">
+                <span class="section-label">AÇÕES</span>
+                <div class="actions-grid">
+                    <a id="acao-editar-produto" class="action-card btn-editar" href="#">
+                        <strong>Editar</strong>
+                        <span>Atualizar dados</span>
+                    </a>
+
+                    <button type="button" id="acao-desativar-produto" class="action-card btn-desativar">
+                        <strong>Desativar</strong>
+                        <span>Suspender disponibilidade</span>
+                    </button>
+
+                    <button type="button" id="acao-ativar-produto" class="action-card btn-ativar">
+                        <strong>Ativar</strong>
+                        <span>Restaurar disponibilidade</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <div class="modal-overlay" id="modal-confirmar-produto" role="dialog" aria-modal="true"
+        aria-labelledby="titulo-confirmar-produto" aria-hidden="true">
+        <div class="modal-card-status">
+            <!-- Cabeçalho dinâmico -->
+            <div class="status-header-aviso perigo" id="status-topo-produto">
+
+                <span id="icone-produto-desativar">
+                    <i data-lucide="alert-triangle"></i>
+                </span>
+
+                <span id="icone-produto-ativar" hidden>
+                    <i data-lucide="shield-check"></i>
+                </span>
+
+                <span id="status-titulo-topo-produto">
+                    AÇÃO DESTRUTIVA
+                </span>
+            </div>
+
+            <!-- Título -->
+            <h2 id="titulo-confirmar-produto">
+                Desativar Produto
+            </h2>
+
+            <!-- Informações do produto -->
+            <div class="status-cliente-card">
+                <div class="info-bloco-topo">
+                    <span class="label-mini">
+                        NOME DO PRODUTO
+                    </span>
+                    <strong id="status-produto-nome">—</strong>
+
+                </div>
+
+                <div class="status-grid-dados">
+                    <div>
+                        <span class="label-mini">TIPO</span>
+                        <strong id="status-produto-tipo">—</strong>
+                    </div>
+
+                    <div>
+                        <span class="label-mini">MODELO</span>
+                        <strong id="status-produto-modelo">—</strong>
+                    </div>
+
+                    <div>
+                        <span class="label-mini">MADEIRA</span>
+                        <strong id="status-produto-madeira">—</strong>
+                    </div>
+
+                    <div>
+                        <span class="label-mini">UNIDADE DE MEDIDA</span>
+                        <strong id="status-produto-medida">—</strong>
+                    </div>
+
+                    <div>
+                        <span class="label-mini">PREÇO SUGERIDO</span>
+                        <strong id="status-produto-preco">—</strong>
+                    </div>
+
+                    <div>
+                        <span class="label-mini">EM ESTOQUE</span>
+                        <strong id="status-produto-estoque">—</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Texto de confirmação -->
+            <div class="status-texto-confirmacao">
+                <p id="texto-confirmar-produto">
+                    Deseja realmente desativar esse produto?
+                </p>
+                <span id="status-descricao-produto">
+                    O produto será marcado como inativo, mantendo seu cadastro e histórico.
+                </span>
+            </div>
+
+            <!-- Botões -->
+            <div class="status-botoes">
+                <button type="button" id="confirmar-status-produto" class="btn-acao-principal desativar">
+                    Desativar
+                </button>
+                <button type="button" id="cancelar-status-produto" class="btn-acao-secundaria">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast flutuante -->
+    <div id="toast-produtos" class="produto-toast" role="status" aria-live="polite"></div>
+
     <script src="/javascript/navbar.js"></script>
     <script src="/javascript/produtos.js" defer></script>
-
-    <script>
-        if (window.lucide) lucide.createIcons();
-    </script>
 </body>
+
 </html>
